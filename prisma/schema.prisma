@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("POSTGRESQL_DB_URL")
 }
 
 model Account {
@@ -48,6 +48,7 @@ model User {
   accounts Account[]
   sessions Session[]
   todos    Todo[]
+  agendas  Agenda[]
 
   @@map("users")
 }
@@ -73,4 +74,19 @@ model Todo {
   updatedAt DateTime @updatedAt
 
   @@map("todo")
+}
+
+model Agenda {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("agenda")
 }

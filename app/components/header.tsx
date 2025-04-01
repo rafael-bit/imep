@@ -1,6 +1,6 @@
 import Image from "next/image"
-import MainNav from "./main-nav"
-import MobileNav from "./mobile-nav"
+import MainNav from "./MainNav"
+import MobileNav from "./MobileNav"
 
 const Header = () => {
   return (

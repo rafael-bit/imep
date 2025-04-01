@@ -6,10 +6,18 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '../database';
 import { Resend } from 'resend';
 
-export const {
-	handlers: { GET, POST },
-	auth,
-} = NextAuth({
+declare module "next-auth" {
+	interface Session {
+		user: {
+			id: string;
+			name?: string | null;
+			email?: string | null;
+			image?: string | null;
+		}
+	}
+}
+
+const handler = NextAuth({
 	pages: {
 		signIn: '/auth',
 		signOut: '/auth',
@@ -17,8 +25,23 @@ export const {
 		verifyRequest: '/auth',
 		newUser: '/app',
 	},
-	secret: process.env.NEXTAUTH_SECRET,
+	secret: process.env.NEXTAUTH_SECRET || 'sua-chave-secreta-aqui',
 	adapter: PrismaAdapter(prisma),
+	session: {
+		strategy: 'jwt',
+		maxAge: 30 * 24 * 60 * 60, // 30 dias
+	},
+	cookies: {
+		sessionToken: {
+			name: `next-auth.session-token`,
+			options: {
+				httpOnly: true,
+				sameSite: 'lax',
+				path: '/',
+				secure: process.env.NODE_ENV === "production",
+			},
+		},
+	},
 	providers: [
 		EmailProvider({
 			from: process.env.EMAIL_FROM,
@@ -61,4 +84,15 @@ export const {
 			},
 		}),
 	],
+	callbacks: {
+		session: async ({ session, token }) => {
+			if (session?.user && token.sub) {
+				session.user.id = token.sub;
+			}
+			return session;
+		},
+	},
 });
+
+export default handler;
+export { handler as GET, handler as POST };
