@@ -39,10 +39,10 @@ export default function PublicAgendaList() {
 					const data = await response.json();
 					setAgendas(data);
 				} else {
-					console.error('Erro ao buscar agendas');
+					console.error('Error on fetch agendas');
 				}
 			} catch (error) {
-				console.error('Erro:', error);
+				console.error('Error on fetch agendas:', error);
 			} finally {
 				setLoading(false);
 			}
