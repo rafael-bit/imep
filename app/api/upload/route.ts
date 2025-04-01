@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 			url: publicPath
 		}, { status: 201 });
 	} catch (error) {
-		console.error('Erro no upload de arquivo:', error);
+		console.error('Error on POST upload:', error);
 		return NextResponse.json({
 			error: 'Erro ao fazer upload da imagem',
 			details: error instanceof Error ? error.message : String(error)

@@ -48,9 +48,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 							<span className="text-sm">
 								{session.user?.name || session.user?.email || 'Usuário'}
 							</span>
-							<a href="/api/auth/signout" className="text-sm text-red-600 hover:text-red-800">
+							<Link href="/api/auth/signout" className="text-sm text-red-600 hover:text-red-800">
 								Sair
-							</a>
+							</Link>
 						</div>
 					</div>
 				</div>
@@ -58,7 +58,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 			</main>
 		);
 	} catch (error) {
-		console.error('Erro ao verificar autenticação:', error);
+		console.error('Error on verify authentication:', error);
 		redirect('/auth');
 	}
 } 
