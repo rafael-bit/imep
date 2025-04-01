@@ -22,7 +22,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 			<main className="min-h-screen bg-[#121212] text-white">
 				<div className="bg-[#121212] shadow-sm">
 					<div className="container mx-auto py-4 px-4 flex justify-between items-center">
-						<h1 className="text-xl font-bold">IMEP</h1>
+						<Link href="/" className="hover:underline">
+							<h1 className="text-xl font-bold">IMEP</h1>
+						</Link>
 						<nav>
 							<ul className="flex items-center gap-4">
 								<li>
@@ -33,7 +35,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 								<li>
 									<Link href="" target="_blank" className="hover:underline">
 										Voluntários
-									</Link> 
+									</Link>
 								</li>
 								<li>
 									<Link href="http://clearcash.vercel.app/" target="_blank" className="hover:underline">

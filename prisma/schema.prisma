@@ -79,8 +79,9 @@ model Todo {
 model Agenda {
   id          String   @id @default(cuid())
   title       String
-  description String?
-  date        DateTime
+  description String
+  image       String?
+  date        DateTime?
 
   user   User   @relation(fields: [userId], references: [id])
   userId String

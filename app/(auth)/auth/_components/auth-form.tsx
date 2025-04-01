@@ -76,7 +76,7 @@ export default function AuthForm() {
 
 	return (
 		<main>
-			<Card className='w-screen h-screen flex flex-col items-center justify-center bg-blue-100	'>
+			<Card className='w-full h-screen flex flex-col items-center justify-center bg-blue-100	'>
 				<div className=' flex flex-col items-center justify-center'>
 					<CardHeader className='w-full flex flex-col items-center'>
 						<Image src={'/logo.png'} alt="" width={100} height={100} className='mb-12' />
