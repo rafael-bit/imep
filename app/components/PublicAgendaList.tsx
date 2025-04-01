@@ -1,0 +1,117 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import Image from 'next/image';
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Card, CardContent } from "@/components/ui/card";
+
+type Agenda = {
+	id: string;
+	title: string;
+	date: string;
+	description: string;
+	image: string | null;
+	userId: string;
+	createdAt: string;
+	updatedAt: string;
+};
+
+export default function PublicAgendaList() {
+	const [agendas, setAgendas] = useState<Agenda[]>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		async function fetchAgendas() {
+			try {
+				const response = await fetch('/api/agenda', {
+					method: 'GET',
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					setAgendas(data);
+				} else {
+					console.error('Erro ao buscar agendas');
+				}
+			} catch (error) {
+				console.error('Erro:', error);
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		fetchAgendas();
+	}, []);
+
+	if (loading) {
+		return (
+			<div className="container mx-auto py-8 text-white">
+				<div className="flex justify-center items-center h-64">
+					<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className="container mx-auto py-8 text-white">
+			<h1 className="text-center text-3xl font-bold mb-8">Agendas</h1>
+
+			{agendas.length === 0 ? (
+				<p className="text-gray-500 text-center">Nenhuma agenda encontrada.</p>
+			) : (
+				<Carousel
+					opts={{
+						align: "center",
+						loop: true,
+					}}
+					className="w-full max-w-5xl mx-auto"
+				>
+					<CarouselContent>
+						{agendas.map((agenda) => (
+							<CarouselItem key={agenda.id} className="md:basis-3/5 lg:basis-2/5">
+								<div className="p-1">
+									<Card className="border border-neutral-700 bg-black/20 text-white overflow-hidden">
+										{agenda.image && (
+											<div className="relative w-full h-48">
+												<Image
+													src={agenda.image}
+													alt={agenda.title}
+													fill
+													className="px-4 object-cover"
+												/>
+											</div>
+										)}
+										<CardContent className="p-6">
+											<h3 className="font-medium text-2xl mb-2">{agenda.title}</h3>
+											<p className="text-gray-400 text-sm mb-4">
+												{format(new Date(agenda.date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
+													locale: ptBR
+												})}
+											</p>
+											{agenda.description && (
+												<p className="text-gray-300 mt-4 whitespace-pre-line">{agenda.description}</p>
+											)}
+										</CardContent>
+									</Card>
+								</div>
+							</CarouselItem>
+						))}
+					</CarouselContent>
+					<div className="flex justify-center mt-4">
+						<CarouselPrevious className="mr-2 bg-black/50 text-white hover:bg-black/70 border-none" />
+						<CarouselNext className="ml-2 bg-black/50 text-white hover:bg-black/70 border-none" />
+					</div>
+				</Carousel>
+			)}
+		</div>
+	);
+} 

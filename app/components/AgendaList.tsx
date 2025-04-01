@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import Image from 'next/image';
 import { AgendaForm } from './AgendaForm';
 import { Button } from '@/components/ui/button';
 import { Edit, Trash2 } from 'lucide-react';
@@ -23,6 +24,7 @@ interface Agenda {
 	title: string;
 	description: string | null;
 	date: string;
+	image: string | null;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -64,9 +66,20 @@ export function AgendaList({
 			{agendas.map((agenda) => (
 				<div
 					key={agenda.id}
-					className="border border-neutral-700 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow"
+					className="flex gap-5 border border-neutral-700 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow overflow-hidden"
 				>
-					<div className="flex justify-between items-start">
+					{agenda.image && (
+						<div className="relative h-40 rounded overflow-hidden">
+							<Image
+								src={agenda.image}
+								alt={agenda.title}
+								width={500}
+								height={500}
+								className="object-cover"
+							/>
+						</div>
+					)}
+					<div className="w-full flex justify-between items-start">
 						<div className="flex-1">
 							<h3 className="font-medium text-lg">{agenda.title}</h3>
 

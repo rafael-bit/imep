@@ -1,9 +1,11 @@
-import Header from "./components/Header"
+import PublicAgendaList from './components/PublicAgendaList';
 
-export default async function Home() {
+export default function Home() {
   return (
-    <div className="w-full">
-      <Header />
-    </div>
+    <main>
+      <div className="container mx-auto px-4 py-8">
+        <PublicAgendaList />
+      </div>
+    </main>
   );
 }
