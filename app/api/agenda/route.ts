@@ -18,8 +18,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { title, description, date } = await request.json();
-		console.log('Received agenda data:', { title, description, date });
+		const { title, description, date, image } = await request.json();
+		console.log('Received agenda data:', { title, description, date, image });
 
 		if (!title || !date) {
 			return NextResponse.json({ error: 'Título e data são obrigatórios' }, { status: 400 });
@@ -42,8 +42,9 @@ export async function POST(request: NextRequest) {
 				title,
 				description,
 				date: new Date(date),
+				image: image || null,
 				userId: defaultUser.id
-			}
+			} as any
 		});
 
 		return NextResponse.json(agenda, { status: 201 });

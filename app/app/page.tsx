@@ -15,6 +15,7 @@ interface Agenda {
 	title: string;
 	description: string | null;
 	date: string;
+	image: string | null;
 	createdAt: string;
 	updatedAt: string;
 }
@@ -87,8 +88,8 @@ export default function Dashboard() {
 							Nova Agenda
 						</Button>
 					</SheetTrigger>
-					<SheetContent>
-						<SheetTitle>Adicionar Nova Agenda</SheetTitle>
+					<SheetContent className="bg-[#121212] border-none p-3 text-white">
+						<SheetTitle className="text-white">Adicionar Nova Agenda</SheetTitle>
 						<AgendaForm onSuccess={handleFormSuccess} />
 					</SheetContent>
 				</Sheet>
