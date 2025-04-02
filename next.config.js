@@ -17,14 +17,6 @@ const nextConfig = {
 			}
 		]
 	},
-
-	webpack: (config) => {
-		config.resolve.alias = {
-			...config.resolve.alias,
-			'./Header': require.resolve('./app/components/Header.tsx')
-		}
-		return config
-	}
 }
 
 module.exports = nextConfig
