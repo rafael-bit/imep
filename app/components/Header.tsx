@@ -3,7 +3,8 @@ import MainNav from "./MainNav"
 import MobileNav from "./MobileNav"
 import Link from "next/link"
 
-const Header = () => {
+export default function Header() {
+
   return (
     <header className=" w-full flex items-center justify-between px-4 text-white font-roboto">
       <section className="flex gap-2 items-center p-4">
@@ -20,5 +21,3 @@ const Header = () => {
     </header>
   )
 }
-
-export default Header
