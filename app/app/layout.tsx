@@ -1,18 +1,12 @@
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import handler from '@/services/auth';
+import { authOptions } from '@/services/auth';
 import Link from 'next/link';
-
-interface UserSession {
-	user?: {
-		name?: string;
-		email?: string;
-	};
-}
+import { Session } from 'next-auth';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
 	try {
-		const session = await getServerSession(handler) as UserSession;
+		const session = await getServerSession(authOptions) as Session;
 
 		if (!session) {
 			redirect('/auth');
