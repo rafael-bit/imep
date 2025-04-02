@@ -7,9 +7,7 @@ import Image from 'next/image';
 import {
 	Carousel,
 	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
+	CarouselItem
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -106,10 +104,6 @@ export default function PublicAgendaList() {
 							</CarouselItem>
 						))}
 					</CarouselContent>
-					<div className="flex justify-center items-center">
-						<CarouselPrevious className="mr-2 bg-black/50 text-white hover:bg-black/70 border-none" />
-						<CarouselNext className="ml-2 bg-black/50 text-white hover:bg-black/70 border-none" />
-					</div>
 				</Carousel>
 			)}
 		</div>

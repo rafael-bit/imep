@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/services/database';
 
-interface AgendaData {
-	title: string;
-	description?: string;
-	date: string;
-	image?: string | null;
-}
-
 export async function GET() {
 	try {
 		const agendas = await prisma.agenda.findMany({
@@ -18,7 +11,7 @@ export async function GET() {
 
 		return NextResponse.json(agendas);
 	} catch (error: unknown) {
-		console.error(error);
+		console.error('Erro ao buscar agendas:', error);
 		return NextResponse.json(
 			{ error: 'Erro ao buscar agendas' },
 			{ status: 500 }
@@ -26,9 +19,16 @@ export async function GET() {
 	}
 }
 
+interface AgendaInput {
+	title: string;
+	description?: string;
+	date: string;
+	image?: string;
+}
+
 export async function POST(request: NextRequest) {
 	try {
-		const { title, description, date, image } = await request.json() as Partial<AgendaData>;
+		const { title, description, date, image }: AgendaInput = await request.json();
 
 		if (!title || !date) {
 			return NextResponse.json(
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 		const agenda = await prisma.agenda.create({
 			data: {
 				title,
-				description: description || '',
+				description: description ?? null,
 				date: new Date(date),
 				image: image || null,
 				userId: defaultUser.id
@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
 
 		return NextResponse.json(agenda, { status: 201 });
 	} catch (error: unknown) {
-		console.error(error);
+		console.error('Erro ao criar agenda:', error);
 		return NextResponse.json(
 			{
 				error: 'Erro ao criar agenda',
-				details: error instanceof Error ? error.message : 'Erro desconhecido'
+				details: error instanceof Error ? error.message : String(error)
 			},
 			{ status: 500 }
 		);

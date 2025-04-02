@@ -6,21 +6,18 @@ export async function GET() {
 	try {
 		const uploadsDir = path.join(process.cwd(), 'public/uploads');
 
-		// Create the directory if it doesn't exist
 		if (!fs.existsSync(uploadsDir)) {
 			fs.mkdirSync(uploadsDir, { recursive: true });
 		}
 
 		const files = fs.readdirSync(uploadsDir);
 
-		// Filter for image files
 		const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 		const imageFiles = files.filter(file => {
 			const ext = path.extname(file).toLowerCase();
 			return imageExtensions.includes(ext);
 		});
 
-		// Create paths relative to public folder
 		const imagePaths = imageFiles.map(file => `/uploads/${file}`);
 
 		return NextResponse.json({

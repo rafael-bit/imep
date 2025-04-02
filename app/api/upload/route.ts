@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
 import path from 'path';
 import { mkdir, writeFile } from 'fs/promises';
 
@@ -16,7 +15,6 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Check if it's an image
 		const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 		if (!validTypes.includes(file.type)) {
 			return NextResponse.json(
@@ -25,23 +23,18 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Create uploads directory if it doesn't exist
 		const uploadsDir = path.join(process.cwd(), 'public/uploads');
 		await mkdir(uploadsDir, { recursive: true });
 
-		// Generate a unique filename
 		const fileExtension = path.extname(file.name);
 		const fileName = `${uuidv4()}${fileExtension}`;
 		const filePath = path.join(uploadsDir, fileName);
 
-		// Convert the file to a Buffer
 		const bytes = await file.arrayBuffer();
 		const buffer = Buffer.from(bytes);
 
-		// Write the file to the uploads directory
 		await writeFile(filePath, buffer);
-
-		// Return the URL to the uploaded file
+		
 		return NextResponse.json({
 			url: `/uploads/${fileName}`,
 			success: true
