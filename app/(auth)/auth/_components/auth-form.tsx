@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
@@ -8,16 +8,26 @@ import { Label } from "@/components/ui/label"
 import { AlertCircle, Loader2, Github } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useForm } from 'react-hook-form'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
 export default function AuthForm() {
+	const { data: session } = useSession();
+	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
 	const [success, setSuccess] = useState(false)
 
 	const form = useForm()
+
+	useEffect(() => {
+		if (session) {
+			router.push('/app');
+		}
+	}, [session, router]);
 
 	const handleSubmit = form.handleSubmit(async (data) => {
 		setIsLoading(true)
@@ -43,34 +53,15 @@ export default function AuthForm() {
 		setIsLoading(true)
 		setError('')
 		try {
-			const result = await signIn(provider, {
+			await signIn(provider, {
 				callbackUrl: '/app',
+				redirect: true,
 			})
-			if (result?.error) {
-				handleLoginError(result.error, provider)
-			}
 		} catch (error) {
 			setIsLoading(false)
 			setError(`Failed to sign in with ${provider}`)
 			toast.error('Something went wrong. Please try again.')
 			console.error(`${provider} sign in error:`, error)
-		}
-	}
-
-	const handleLoginError = (error: string, provider: string) => {
-		setIsLoading(false)
-		if (error.includes("OAuthAccountNotLinked")) {
-			setError("Email already used with a different provider")
-			toast.error("Account not linked")
-		} else if (error.includes("OAuthSignin")) {
-			setError("Authentication failed")
-			toast.error("Failed to sign in")
-		} else if (error.includes("OAuthCallback")) {
-			setError("Authentication error")
-			toast.error("Authentication Error")
-		} else {
-			setError(`An unknown error occurred`)
-			toast.error(`An unknown error occurred during ${provider} login. Please try again later.`)
 		}
 	}
 

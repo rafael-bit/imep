@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthOptions } from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import GitHubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
@@ -17,7 +17,7 @@ declare module "next-auth" {
 	}
 }
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
 	pages: {
 		signIn: '/auth',
 		signOut: '/auth',
@@ -92,7 +92,8 @@ const handler = NextAuth({
 			return session;
 		},
 	},
-});
+};
 
-export default handler;
+const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

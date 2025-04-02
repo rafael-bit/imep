@@ -1,20 +1,14 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "IMEP - Igreja Missões do Evangelho Pleno",
-	description: "Site oficial da Igreja Missões do Evangelho Pleno",
+	title: "IMEP - Autenticação",
+	description: "Faça login para acessar o sistema IMEP",
 };
 
-export default function RootLayout({
+export default function AuthLayout({
 	children,
 }: {
 	children: React.ReactNode;
-}) {	
-	return (
-		<html lang="pt-br">
-			<body className="antialiased font-sans">
-				{children}
-			</body>
-		</html>
-	);
+}) {
+	return children;
 }

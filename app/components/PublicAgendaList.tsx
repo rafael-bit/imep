@@ -7,9 +7,7 @@ import Image from 'next/image';
 import {
 	Carousel,
 	CarouselContent,
-	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
+	CarouselItem
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -39,10 +37,10 @@ export default function PublicAgendaList() {
 					const data = await response.json();
 					setAgendas(data);
 				} else {
-					console.error('Erro ao buscar agendas');
+					console.error('Error on fetch agendas');
 				}
 			} catch (error) {
-				console.error('Erro:', error);
+				console.error('Error on fetch agendas:', error);
 			} finally {
 				setLoading(false);
 			}
@@ -73,13 +71,13 @@ export default function PublicAgendaList() {
 						align: "center",
 						loop: true,
 					}}
-					className="w-full max-w-5xl mx-auto"
+					className="w-full max-w-4xl mx-auto"
 				>
 					<CarouselContent>
 						{agendas.map((agenda) => (
 							<CarouselItem key={agenda.id} className="md:basis-3/5 lg:basis-2/5">
-								<div className="p-1">
-									<Card className="border border-neutral-700 bg-black/20 text-white overflow-hidden">
+								<div>
+									<Card className="border border-neutral-700 bg-black/20 text-white overflow-hidden py-4">
 										{agenda.image && (
 											<div className="relative w-full h-48">
 												<Image
@@ -106,10 +104,6 @@ export default function PublicAgendaList() {
 							</CarouselItem>
 						))}
 					</CarouselContent>
-					<div className="flex justify-center mt-4">
-						<CarouselPrevious className="mr-2 bg-black/50 text-white hover:bg-black/70 border-none" />
-						<CarouselNext className="ml-2 bg-black/50 text-white hover:bg-black/70 border-none" />
-					</div>
 				</Carousel>
 			)}
 		</div>

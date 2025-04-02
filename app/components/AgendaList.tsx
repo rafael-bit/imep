@@ -79,7 +79,7 @@ export function AgendaList({
 							/>
 						</div>
 					)}
-					<div className="w-full flex justify-between items-start">
+					<div className="w-full flex flex-col md:flex-row justify-between items-start">
 						<div className="flex-1">
 							<h3 className="font-medium text-lg">{agenda.title}</h3>
 
@@ -101,8 +101,8 @@ export function AgendaList({
 										<Edit className="h-4 w-4" />
 									</Button>
 								</SheetTrigger>
-								<SheetContent>
-									<SheetTitle>Editar Agenda</SheetTitle>
+								<SheetContent className="bg-[#121212] text-white border-none p-5">
+									<SheetTitle className='text-xl text-white'>Editar Agenda</SheetTitle>
 									{selectedAgenda && selectedAgenda.id === agenda.id && (
 										<AgendaForm agenda={selectedAgenda} onSuccess={onFormSuccess} />
 									)}

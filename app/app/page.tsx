@@ -1,9 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { format } from 'date-fns';
-import { pt } from 'date-fns/locale';
 import { AgendaForm } from '@/app/components/AgendaForm';
 import { AgendaList } from '@/app/components/AgendaList';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -25,7 +22,6 @@ export default function Dashboard() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 	const [selectedAgenda, setSelectedAgenda] = useState<Agenda | null>(null);
-	const router = useRouter();
 
 	const fetchAgendas = async () => {
 		try {
@@ -79,8 +75,8 @@ export default function Dashboard() {
 
 	return (
 		<div className="container mx-auto py-8">
-			<div className="flex justify-between items-center mb-8">
-				<h1 className="text-3xl font-bold">Dashboard de Agendas</h1>
+			<div className="flex justify-between items-center mb-8 px-5">
+				<h1 className="text-3xl font-bold">Dashboard <span className='hidden sm:inline-block'>de Agendas</span></h1>
 				<Sheet>
 					<SheetTrigger asChild>
 						<Button>

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/services/database';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
 	try {
 		const agendas = await prisma.agenda.findMany({
 			orderBy: {
@@ -10,19 +10,31 @@ export async function GET(request: NextRequest) {
 		});
 
 		return NextResponse.json(agendas);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Erro ao buscar agendas:', error);
-		return NextResponse.json({ error: 'Erro ao buscar agendas' }, { status: 500 });
+		return NextResponse.json(
+			{ error: 'Erro ao buscar agendas' },
+			{ status: 500 }
+		);
 	}
+}
+
+interface AgendaInput {
+	title: string;
+	description?: string;
+	date: string;
+	image?: string;
 }
 
 export async function POST(request: NextRequest) {
 	try {
-		const { title, description, date, image } = await request.json();
-		console.log('Received agenda data:', { title, description, date, image });
+		const { title, description, date, image }: AgendaInput = await request.json();
 
 		if (!title || !date) {
-			return NextResponse.json({ error: 'Título e data são obrigatórios' }, { status: 400 });
+			return NextResponse.json(
+				{ error: 'Título e data são obrigatórios' },
+				{ status: 400 }
+			);
 		}
 
 		let defaultUser = await prisma.user.findFirst();
@@ -34,25 +46,27 @@ export async function POST(request: NextRequest) {
 					email: 'default@example.com',
 				}
 			});
-			console.log('Created default user:', defaultUser);
 		}
 
 		const agenda = await prisma.agenda.create({
 			data: {
 				title,
-				description,
+				description: description ?? null,
 				date: new Date(date),
 				image: image || null,
 				userId: defaultUser.id
-			} as any
+			}
 		});
 
 		return NextResponse.json(agenda, { status: 201 });
-	} catch (error) {
-		console.error('Erro ao criar agenda - full error:', error);
-		return NextResponse.json({
-			error: 'Erro ao criar agenda',
-			details: error instanceof Error ? error.message : String(error)
-		}, { status: 500 });
+	} catch (error: unknown) {
+		console.error('Erro ao criar agenda:', error);
+		return NextResponse.json(
+			{
+				error: 'Erro ao criar agenda',
+				details: error instanceof Error ? error.message : String(error)
+			},
+			{ status: 500 }
+		);
 	}
 }
