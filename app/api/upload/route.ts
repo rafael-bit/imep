@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 import path from 'path';
-
-const uploadDir = path.join(process.cwd(), 'public/uploads');
+import { mkdir, writeFile } from 'fs/promises';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -11,27 +10,50 @@ export async function POST(request: NextRequest) {
 		const file = formData.get('file') as File;
 
 		if (!file) {
-			return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
+			return NextResponse.json(
+				{ error: 'Nenhum arquivo foi enviado' },
+				{ status: 400 }
+			);
 		}
 
-		const filename = `${uuidv4()}-${file.name.replace(/\s/g, '_')}`;
-		const filePath = path.join(uploadDir, filename);
-		const publicPath = `/uploads/${filename}`;
+		// Check if it's an image
+		const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+		if (!validTypes.includes(file.type)) {
+			return NextResponse.json(
+				{ error: 'Tipo de arquivo não suportado. Apenas imagens são permitidas.' },
+				{ status: 400 }
+			);
+		}
 
+		// Create uploads directory if it doesn't exist
+		const uploadsDir = path.join(process.cwd(), 'public/uploads');
+		await mkdir(uploadsDir, { recursive: true });
+
+		// Generate a unique filename
+		const fileExtension = path.extname(file.name);
+		const fileName = `${uuidv4()}${fileExtension}`;
+		const filePath = path.join(uploadsDir, fileName);
+
+		// Convert the file to a Buffer
 		const bytes = await file.arrayBuffer();
 		const buffer = Buffer.from(bytes);
 
+		// Write the file to the uploads directory
 		await writeFile(filePath, buffer);
 
+		// Return the URL to the uploaded file
 		return NextResponse.json({
-			success: true,
-			url: publicPath
-		}, { status: 201 });
+			url: `/uploads/${fileName}`,
+			success: true
+		});
 	} catch (error) {
-		console.error('Error on POST upload:', error);
-		return NextResponse.json({
-			error: 'Erro ao fazer upload da imagem',
-			details: error instanceof Error ? error.message : String(error)
-		}, { status: 500 });
+		console.error('Erro ao processar upload:', error);
+		return NextResponse.json(
+			{
+				error: 'Erro ao processar upload',
+				details: error instanceof Error ? error.message : String(error)
+			},
+			{ status: 500 }
+		);
 	}
 } 

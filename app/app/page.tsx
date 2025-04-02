@@ -75,8 +75,8 @@ export default function Dashboard() {
 
 	return (
 		<div className="container mx-auto py-8">
-			<div className="flex justify-between items-center mb-8">
-				<h1 className="text-3xl font-bold">Dashboard de Agendas</h1>
+			<div className="flex justify-between items-center mb-8 px-5">
+				<h1 className="text-3xl font-bold">Dashboard <span className='hidden sm:inline-block'>de Agendas</span></h1>
 				<Sheet>
 					<SheetTrigger asChild>
 						<Button>

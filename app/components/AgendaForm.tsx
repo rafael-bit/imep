@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar as CalendarIcon, ImagePlus, X } from 'lucide-react';
+import { Calendar as CalendarIcon, ImagePlus, X, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { ImageGalleryModal } from './ImageGalleryModal';
 
 interface Agenda {
 	id: string;
@@ -33,6 +34,7 @@ export function AgendaForm({ agenda, onSuccess }: AgendaFormProps) {
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
+	const [showGallery, setShowGallery] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const isEditing = !!agenda;
@@ -69,6 +71,11 @@ export function AgendaForm({ agenda, onSuccess }: AgendaFormProps) {
 		if (fileInputRef.current) {
 			fileInputRef.current.value = '';
 		}
+	};
+
+	const handleGallerySelect = (imagePath: string) => {
+		setImage(imagePath);
+		setImageFile(null); // No file upload needed as we're using an existing image
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -137,107 +144,115 @@ export function AgendaForm({ agenda, onSuccess }: AgendaFormProps) {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4 mt-6">
-			{error && (
-				<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-					{error}
-				</div>
-			)}
-
-			<div className="space-y-2">
-				<Label htmlFor="title">Título</Label>
-				<Input
-					id="title"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
-					placeholder="Título da agenda"
-					required
-				/>
-			</div>
-
-			<div className="space-y-2">
-				<Label htmlFor="description">Descrição</Label>
-				<Textarea
-					id="description"
-					value={description}
-					onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
-					placeholder="Descrição (opcional)"
-					rows={4}
-				/>
-			</div>
-
-			<div className="space-y-2">
-				<Label htmlFor="image">Imagem</Label>
-				<div className="flex items-center space-x-2">
-					<Button
-						type="button"
-						variant="outline"
-						onClick={() => fileInputRef.current?.click()}
-						className="flex items-center text-black cursor-pointer"
-					>
-						<ImagePlus className="h-4 w-4 mr-2" />
-						{image ? 'Trocar Imagem' : 'Adicionar Imagem'}
-					</Button>
-					{image && (
-						<Button
-							type="button"
-							variant="destructive"
-							size="icon"
-							onClick={removeImage}
-						>
-							<X className="h-4 w-4" />
-						</Button>
-					)}
-					<input
-						type="file"
-						id="image"
-						ref={fileInputRef}
-						onChange={handleImageChange}
-						accept="image/*"
-						className="hidden"
-					/>
-				</div>
-				{image && (
-					<div className="mt-2 relative w-full h-40 rounded-md overflow-hidden">
-						<Image
-							src={image}
-							alt="Preview"
-							fill
-							className="object-cover"
-						/>
+		<>
+			<form onSubmit={handleSubmit} className="space-y-4 mt-6">
+				{error && (
+					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+						{error}
 					</div>
 				)}
-			</div>
 
-			<div className="space-y-2">
-				<Label htmlFor="date">Data e Hora</Label>
-				<Popover>
-					<PopoverTrigger asChild>
+				<div className="space-y-2">
+					<Label htmlFor="title">Título</Label>
+					<Input
+						id="title"
+						value={title}
+						onChange={(e) => setTitle(e.target.value)}
+						placeholder="Título da agenda"
+						required
+					/>
+				</div>
+
+				<div className="space-y-2">
+					<Label htmlFor="description">Descrição</Label>
+					<Textarea
+						id="description"
+						value={description}
+						onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+						placeholder="Descrição (opcional)"
+						rows={4}
+					/>
+				</div>
+
+				<div className="space-y-2">
+					<Label htmlFor="image">Imagem</Label>
+					<div className="flex items-center space-x-2">
 						<Button
-							variant={"outline"}
-							className={cn(
-								"w-full justify-start text-left font-normal cursor-pointer",
-								!date && "text-muted-foreground"
-							)}
+							type="button"
+							variant="outline"
+							onClick={() => setShowGallery(true)}
+							className="flex items-center text-black cursor-pointer"
 						>
-							<CalendarIcon className="mr-2 h-4 w-4" />
-							{date ? format(date, "PPP") : <span>Selecione uma data</span>}
+							<ImageIcon className="h-4 w-4 mr-2" />
+							Escolher da Galeria
 						</Button>
-					</PopoverTrigger>
-					<PopoverContent className="w-auto p-0">
-						<Calendar
-							mode="single"
-							selected={date || undefined}
-							onSelect={(day) => setDate(day || null)}
-							initialFocus
+						{image && (
+							<Button
+								type="button"
+								variant="destructive"
+								size="icon"
+								onClick={removeImage}
+							>
+								<X className="h-4 w-4" />
+							</Button>
+						)}
+						<input
+							type="file"
+							id="image"
+							ref={fileInputRef}
+							onChange={handleImageChange}
+							accept="image/*"
+							className="hidden"
 						/>
-					</PopoverContent>
-				</Popover>
-			</div>
+					</div>
+					{image && (
+						<div className="mt-2 relative w-full h-40 rounded-md overflow-hidden">
+							<Image
+								src={image}
+								alt="Preview"
+								fill
+								className="object-cover"
+							/>
+						</div>
+					)}
+				</div>
 
-			<Button type="submit" disabled={loading} className="w-full bg-white text-black hover:bg-black hover:text-white">
-				{loading ? 'Processando...' : isEditing ? 'Atualizar Agenda' : 'Criar Agenda'}
-			</Button>
-		</form>
+				<div className="space-y-2">
+					<Label htmlFor="date">Data e Hora</Label>
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button
+								variant={"outline"}
+								className={cn(
+									"w-full justify-start text-left font-normal cursor-pointer",
+									!date && "text-muted-foreground"
+								)}
+							>
+								<CalendarIcon className="mr-2 h-4 w-4" />
+								{date ? format(date, "PPP") : <span>Selecione uma data</span>}
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0">
+							<Calendar
+								mode="single"
+								selected={date || undefined}
+								onSelect={(day) => setDate(day || null)}
+								initialFocus
+							/>
+						</PopoverContent>
+					</Popover>
+				</div>
+
+				<Button type="submit" disabled={loading} className="w-full bg-white text-black hover:bg-black hover:text-white">
+					{loading ? 'Processando...' : isEditing ? 'Atualizar Agenda' : 'Criar Agenda'}
+				</Button>
+			</form>
+
+			<ImageGalleryModal
+				isOpen={showGallery}
+				onClose={() => setShowGallery(false)}
+				onSelectImage={handleGallerySelect}
+			/>
+		</>
 	);
 }
