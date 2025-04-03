@@ -75,20 +75,20 @@ export default function PublicAgendaList() {
 				>
 					<CarouselContent>
 						{agendas.map((agenda) => (
-							<CarouselItem key={agenda.id} className="md:basis-3/5 lg:basis-2/5">
+							<CarouselItem key={agenda.id} className="md:basis-2/6 lg:basis-2/6">
 								<div>
 									<Card className="border border-neutral-700 bg-black/20 text-white overflow-hidden py-4">
 										{agenda.image && (
-											<div className="relative w-full h-48">
+											<div className="relative w-full h-64 md:h-[10rem] overflow-hidden">
 												<Image
 													src={agenda.image}
 													alt={agenda.title}
 													fill
-													className="px-4 object-cover"
+													className="px-4 max-w-full max-h-full"
 												/>
 											</div>
 										)}
-										<CardContent className="p-6">
+										<CardContent className="p-5 pb-3">
 											<h3 className="font-medium text-2xl mb-2">{agenda.title}</h3>
 											<p className="text-gray-400 text-sm mb-4">
 												{format(new Date(agenda.date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
