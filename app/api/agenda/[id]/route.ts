@@ -4,10 +4,13 @@ import { prisma } from '@/services/database';
 export async function GET() {
 	try {
 		const agendas = await prisma.agenda.findMany({
-			orderBy: { date: 'asc' }
+			orderBy: {
+				date: 'asc'
+			}
 		});
+
 		return NextResponse.json(agendas);
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Erro ao buscar agendas:', error);
 		return NextResponse.json(
 			{ error: 'Erro ao buscar agendas' },
@@ -16,9 +19,16 @@ export async function GET() {
 	}
 }
 
+interface AgendaInput {
+	title: string;
+	description?: string;
+	date: string;
+	image?: string;
+}
+
 export async function POST(request: NextRequest) {
 	try {
-		const { title, description, date, image } = await request.json();
+		const { title, description, date, image }: AgendaInput = await request.json();
 
 		if (!title || !date) {
 			return NextResponse.json(
@@ -28,9 +38,13 @@ export async function POST(request: NextRequest) {
 		}
 
 		let defaultUser = await prisma.user.findFirst();
+
 		if (!defaultUser) {
 			defaultUser = await prisma.user.create({
-				data: { name: 'Default User', email: 'default@example.com' }
+				data: {
+					name: 'Default User',
+					email: 'default@example.com',
+				}
 			});
 		}
 
@@ -45,7 +59,7 @@ export async function POST(request: NextRequest) {
 		});
 
 		return NextResponse.json(agenda, { status: 201 });
-	} catch (error) {
+	} catch (error: unknown) {
 		console.error('Erro ao criar agenda:', error);
 		return NextResponse.json(
 			{
