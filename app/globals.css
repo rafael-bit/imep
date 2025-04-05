@@ -120,3 +120,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes shimmer {
+  0% {
+    background-position: -150% 0;
+  }
+
+  100% {
+    background-position: 150% 0;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.196) 0%,
+      rgba(255, 255, 255, 0.3) 35%,
+      rgba(255, 255, 255, 0.848) 50%,
+      rgba(255, 255, 255, 0.3) 65%,
+      rgba(255, 255, 255, 0.185) 100%);
+  background-size: 125% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #fff;
+  animation: shimmer 2s ease-in-out infinite alternate;
+  display: inline-block;
+}
