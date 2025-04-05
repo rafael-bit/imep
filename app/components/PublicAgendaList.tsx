@@ -10,6 +10,7 @@ import {
 	CarouselItem
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
+import { FaAnglesRight } from "react-icons/fa6";
 
 type Agenda = {
 	id: string;
@@ -106,6 +107,13 @@ export default function PublicAgendaList() {
 					</CarouselContent>
 				</Carousel>
 			)}
+			<div className="flex justify-center items-center py-4">
+				<p className="flex items-center gap-3 bg-black px-5 py-1 pb-1.5 rounded-full">
+					<span className="shimmer-text text-base sm:text-lg flex items-center gap-3">
+						Deslize para ver mais <span>&gt;</span>
+					</span>
+				</p>
+			</div>
 		</div>
 	);
 } 
