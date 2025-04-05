@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import HeaderWrapper from "./components/HeaderWrapper";
+import HeaderWrapper from "./components/Header";
 import { Providers } from "./components/Providers";
+import FooterWrapper from "./components/Footer";
 
 export const dynamic = 'force-dynamic';
 
@@ -21,6 +22,7 @@ export default function RootLayout({
         <Providers>
           <HeaderWrapper />
           {children}
+          <FooterWrapper />
         </Providers>
       </body>
     </html>
