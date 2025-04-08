@@ -10,7 +10,6 @@ import {
 	CarouselItem
 } from "@/components/ui/carousel";
 import { Card, CardContent } from "@/components/ui/card";
-import { FaAnglesRight } from "react-icons/fa6";
 
 type Agenda = {
 	id: string;
