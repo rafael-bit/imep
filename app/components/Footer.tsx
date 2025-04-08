@@ -14,14 +14,14 @@ const Footer = () => {
 						<Image src={'/logo.png'} alt="Logo Imep" className="w-12 h-10" width={70} height={70} />
 						<h1 className="text-3xl font-bold">IMEP</h1>
 					</li>
-					<li className="mt-5 hidden sm:inline-block "><p>A IMEP é uma comunidade cristã comprometida em viver e anunciar o amor de Jesus. Cremos na Palavra de Deus como verdade e buscamos diariamente uma vida guiada pelo Espírito Santo.</p></li>
+					<li className="mt-5 hidden sm:inline-block text-sm"><p>A IMEP é uma comunidade cristã comprometida em viver e anunciar o amor de Jesus. Cremos na Palavra de Deus como verdade e buscamos diariamente uma vida guiada pelo Espírito Santo.</p></li>
 					<li className="mt-5 sm:mt-10 text-center sm:text-left">
 						<p>&copy; {new Date().getFullYear()} Igreja Missões do Evangelho Pleno.</p>
 					</li>
 				</ul>
 				<ul className="w-full flex flex-col items-center justify-center sm:inline-block pt-7 sm:w-1/4">
-					<li className="w-full"><h3 className="text-xl font-bold">Nossas Sedes</h3></li>
-					<ul className="my-5">
+					<li className="w-full"><h3 className="text-xl font-bold text-center sm:text-left">Nossas Sedes</h3></li>
+					<ul className="my-5 text-sm">
 						<li><p>Sede: Avenida Coronel Tiberio Meira, 447</p></li>
 						<li><p>Sub-Sede: Rua Antônio Franscisco da Silva, 989</p></li>
 						<li><p>Telefone: (77) 9 9965-0202</p></li>
@@ -32,7 +32,7 @@ const Footer = () => {
 					<li><h3 className="mt-5 mb-3 text-xl font-bold">Navegue pelas páginas</h3></li>
 					{navLinks.map((link, index) => (
 						<li key={index}>
-							<Link href={link.href} className="text-white rounded-full transition duration-300 cursor-pointer hover:scale-110 flex items-center gap-3 p-1">
+							<Link href={link.href} className="text-white rounded-full transition duration-300 cursor-pointer hover:scale-110 flex items-center gap-3 p-1 text-sm">
 								{link.label}
 							</Link>
 						</li>
