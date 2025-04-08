@@ -4,8 +4,8 @@ import PublicAgendaList from './components/PublicAgendaList';
 export default function Home() {
   return (
     <main>
-        <Hero />
-        <PublicAgendaList />
+      <Hero />
+      <PublicAgendaList />
     </main>
   );
 }
