@@ -77,7 +77,7 @@ model Todo {
 }
 
 model Agenda {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String
   image       String?
@@ -90,4 +90,15 @@ model Agenda {
   updatedAt DateTime @updatedAt
 
   @@map("agenda")
+}
+
+model Volunteer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  phone     String
+  baptized  Boolean
+  ministry  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
