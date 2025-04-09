@@ -23,7 +23,7 @@ interface VolunteerFormData {
 	ministry: string;
 }
 
-export default function page() {
+export default function Page() {
 	const [formData, setFormData] = useState<VolunteerFormData>({
 		name: '',
 		email: '',
@@ -109,7 +109,7 @@ export default function page() {
 					<div className='py-12 px-10 flex flex-col justify-center relative w-full'>
 						<CardHeader>
 							<CardTitle className='text-4xl text-center text-white'>Eu quero ser um voluntário</CardTitle>
-							<CardDescription className='mt-5 text-center'>Se quer ser um voluntário do IMEP, preencha o formulário abaixo</CardDescription>
+							<CardDescription className='mt-5 text-center'>Se quiser ser um voluntário do IMEP, preencha o formulário abaixo</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<form onSubmit={handleSubmit}>
