@@ -109,7 +109,7 @@ export default function PublicAgendaList() {
 			<div className="flex justify-center items-center py-4">
 				<p className="flex items-center gap-3 bg-black px-5 py-1 pb-1.5 rounded-full">
 					<span className="shimmer-text text-base sm:text-lg flex items-center gap-3">
-						Deslize para ver mais <span>&gt;</span>
+						<span>&lt;</span> Deslize para ver mais
 					</span>
 				</p>
 			</div>

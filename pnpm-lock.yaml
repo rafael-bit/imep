@@ -44,6 +44,9 @@ dependencies:
   embla-carousel-react:
     specifier: ^8.5.2
     version: 8.5.2(react@19.0.0)
+  framer-motion:
+    specifier: ^12.9.4
+    version: 12.9.4(react-dom@19.0.0)(react@19.0.0)
   generate:
     specifier: ^0.14.0
     version: 0.14.0
@@ -5092,6 +5095,27 @@ packages:
       map-cache: 0.2.2
     dev: false
 
+  /framer-motion@12.9.4(react-dom@19.0.0)(react@19.0.0):
+    resolution: {integrity: sha512-yaeGDmGQ3eCQEwZ95/pRQMaSh/Q4E2CK6JYOclG/PdjyQad0MULJ+JFVV8911Fl5a6tF6o0wgW8Dpl5Qx4Adjg==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+    dependencies:
+      motion-dom: 12.9.4
+      motion-utils: 12.9.4
+      react: 19.0.0
+      react-dom: 19.0.0(react@19.0.0)
+      tslib: 2.8.1
+    dev: false
+
   /fs-exists-sync@0.1.0:
     resolution: {integrity: sha512-cR/vflFyPZtrN6b38ZyWxpWdhlXrzZEBawlpBQMq7033xVY7/kg0GDMBK5jg8lDYQckdJ5x/YC88lM3C7VMsLg==}
     engines: {node: '>=0.10.0'}
@@ -7179,6 +7203,16 @@ packages:
     hasBin: true
     dependencies:
       minimist: 1.2.8
+    dev: false
+
+  /motion-dom@12.9.4:
+    resolution: {integrity: sha512-25TWkQPj5I18m+qVjXGtCsxboY11DaRC5HMjd29tHKExazW4Zf4XtAagBdLpyKsVuAxEQ6cx5/E4AB21PFpLnQ==}
+    dependencies:
+      motion-utils: 12.9.4
+    dev: false
+
+  /motion-utils@12.9.4:
+    resolution: {integrity: sha512-BW3I65zeM76CMsfh3kHid9ansEJk9Qvl+K5cu4DVHKGsI52n76OJ4z2CUJUV+Mn3uEP9k1JJA3tClG0ggSrRcg==}
     dev: false
 
   /ms@2.0.0:

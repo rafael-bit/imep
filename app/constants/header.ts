@@ -1,7 +1,7 @@
 export const navLinks = [
-	{ href: "#", label: "Agenda" },
-	{ href: "#", label: "Unidades" },
-	{ href: "#", label: "Nossos Valores" },
-	{ href: "#", label: "Colaborar" },
+	{ href: "/agenda", label: "Agenda" },
+	{ href: "/unidades", label: "Unidades" },
+	{ href: "/nossos-valores", label: "Nossos Valores" },
+	{ href: "/colaborar", label: "Colaborar" },
 	{ href: "/voluntarios", label: "Voluntários" },
 ];
