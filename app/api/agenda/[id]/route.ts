@@ -129,7 +129,7 @@ export async function DELETE(
 	}
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { }: { params: { id: string } }) {
 	try {
 		const { title, description, date, image }: AgendaInput = await request.json();
 

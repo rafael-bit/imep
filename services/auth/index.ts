@@ -103,7 +103,7 @@ export const authOptions: AuthOptions = {
 		session: async ({ session, token }) => {
 			if (session?.user && token.sub) {
 				session.user.id = token.sub;
-				session.user.isAdmin = token.isAdmin || false;
+				session.user.isAdmin = token.isAdmin as boolean || false;
 			}
 			return session;
 		},

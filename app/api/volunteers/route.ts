@@ -10,7 +10,7 @@ const volunteerSchema = z.object({
 	ministry: z.string().min(1, "Selecione um ministério"),
 });
 
-export async function GET(request: Request) {
+export async function GET() {
 	try {
 		const volunteers = await prisma.volunteer.findMany({
 			orderBy: {
