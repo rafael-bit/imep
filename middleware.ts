@@ -36,7 +36,11 @@ export async function middleware(request: NextRequest) {
 	}
 
 	if (pathname === '/auth' && token) {
-		return NextResponse.redirect(new URL('/app', request.url))
+		if (token.isAdmin) {
+			return NextResponse.redirect(new URL('/app', request.url))
+		} else {
+			return NextResponse.redirect(new URL('/access-denied', request.url))
+		}
 	}
 
 	if (pathname.startsWith('/app')) {

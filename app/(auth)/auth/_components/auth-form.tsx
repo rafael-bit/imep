@@ -25,7 +25,11 @@ export default function AuthForm() {
 
 	useEffect(() => {
 		if (session) {
-			router.push('/app');
+			if (session.user.isAdmin) {
+				router.push('/app');
+			} else {
+				router.push('/access-denied');
+			}
 		}
 	}, [session, router]);
 
@@ -54,7 +58,6 @@ export default function AuthForm() {
 		setError('')
 		try {
 			await signIn(provider, {
-				callbackUrl: '/app',
 				redirect: true,
 			})
 		} catch (error) {

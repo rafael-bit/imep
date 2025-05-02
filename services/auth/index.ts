@@ -28,7 +28,6 @@ export const authOptions: AuthOptions = {
 		signOut: '/auth',
 		error: '/auth',
 		verifyRequest: '/auth',
-		newUser: '/app',
 	},
 	secret: process.env.NEXTAUTH_SECRET || 'sua-chave-secreta-aqui',
 	adapter: PrismaAdapter(prisma),
