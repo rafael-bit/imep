@@ -7,7 +7,7 @@ const getUrl = (path: string) => {
 };
 
 export async function middleware(request: NextRequest) {
-	const token = request.cookies.get('next-auth.session-token')
+	const token = await getToken({ req: request as any, secret: process.env.NEXTAUTH_SECRET })
 	const pathname = request.nextUrl.pathname
 
 	if (pathname.startsWith('/api/')) {
@@ -42,6 +42,10 @@ export async function middleware(request: NextRequest) {
 	if (pathname.startsWith('/app')) {
 		if (!token) {
 			return NextResponse.redirect(new URL('/auth', request.url))
+		}
+
+		if (!token.isAdmin) {
+			return NextResponse.redirect(new URL('/access-denied', request.url))
 		}
 	}
 

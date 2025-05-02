@@ -140,7 +140,7 @@ export function AgendaForm({ agenda, onSuccess }: AgendaFormProps) {
 			}
 
 			const url = isEditing ? `/api/agenda/${agenda.id}` : '/api/agenda';
-			const method = isEditing ? 'PATCH' : 'POST';
+			const method = isEditing ? 'PUT' : 'POST';
 
 			const response = await fetch(url, {
 				method,
@@ -275,7 +275,7 @@ export function AgendaForm({ agenda, onSuccess }: AgendaFormProps) {
 							<Button
 								variant="outline"
 								className={cn(
-									"w-full justify-start text-left font-normal",
+									"w-full justify-start text-left font-normal text-neutral-900",
 									!form.date && "text-muted-foreground"
 								)}
 								id="date"

@@ -90,11 +90,6 @@ export default function PublicAgendaList() {
 										)}
 										<CardContent className="p-5 pb-3">
 											<h3 className="font-medium text-2xl mb-2">{agenda.title}</h3>
-											<p className="text-gray-400 text-sm mb-4">
-												{format(new Date(agenda.date), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-													locale: ptBR
-												})}
-											</p>
 											{agenda.description && (
 												<p className="text-gray-300 mt-4 whitespace-pre-line">{agenda.description}</p>
 											)}

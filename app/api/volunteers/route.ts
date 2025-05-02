@@ -10,14 +10,30 @@ const volunteerSchema = z.object({
 	ministry: z.string().min(1, "Selecione um ministério"),
 });
 
+export async function GET(request: Request) {
+	try {
+		const volunteers = await prisma.volunteer.findMany({
+			orderBy: {
+				createdAt: 'desc'
+			}
+		});
+
+		return NextResponse.json(volunteers);
+	} catch (error) {
+		console.error("Error fetching volunteers:", error);
+		return NextResponse.json(
+			{ error: "Erro ao buscar voluntários" },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function POST(request: Request) {
 	try {
 		const body = await request.json();
 
-		// Validate the request body
 		const validatedData = volunteerSchema.parse(body);
 
-		// Check if email already exists
 		const existingVolunteer = await prisma.volunteer.findUnique({
 			where: { email: validatedData.email },
 		});
@@ -29,7 +45,6 @@ export async function POST(request: Request) {
 			);
 		}
 
-		// Create the volunteer
 		const volunteer = await prisma.volunteer.create({
 			data: {
 				name: validatedData.name,

@@ -13,7 +13,12 @@ declare module "next-auth" {
 			name?: string | null;
 			email?: string | null;
 			image?: string | null;
+			isAdmin?: boolean;
 		}
+	}
+
+	interface JWT {
+		isAdmin?: boolean;
 	}
 }
 
@@ -85,9 +90,20 @@ export const authOptions: AuthOptions = {
 		}),
 	],
 	callbacks: {
+		jwt: async ({ token, user }) => {
+			if (user) {
+				const dbUser = await prisma.user.findUnique({
+					where: { id: user.id },
+					select: { isAdmin: true }
+				});
+				token.isAdmin = dbUser?.isAdmin || false;
+			}
+			return token;
+		},
 		session: async ({ session, token }) => {
 			if (session?.user && token.sub) {
 				session.user.id = token.sub;
+				session.user.isAdmin = token.isAdmin || false;
 			}
 			return session;
 		},

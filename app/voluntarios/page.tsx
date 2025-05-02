@@ -23,6 +23,22 @@ interface VolunteerFormData {
 	ministry: string;
 }
 
+// Mapeamento de valores internos para nomes amigáveis
+const ministryLabels: Record<string, string> = {
+	"kidschurch": "Igreja da Criança",
+	"musicteam": "Ministério de Louvor",
+	"techinicalsuporte": "Suporte Técnico",
+	"sound": "Técnico de Som",
+	"slide": "Mídia Slide",
+	"photograph": "Mídia Fotografia",
+	"geralmidia": "Mídia Geral"
+};
+
+// Função para obter o nome amigável do ministério
+const getMinistryLabel = (ministryValue: string): string => {
+	return ministryLabels[ministryValue] || ministryValue;
+};
+
 export default function Page() {
 	const [formData, setFormData] = useState<VolunteerFormData>({
 		name: '',
@@ -174,16 +190,18 @@ export default function Page() {
 												onValueChange={(value) => setFormData({ ...formData, ministry: value })}
 											>
 												<SelectTrigger className="border border-neutral-800 w-full">
-													<SelectValue placeholder="Selecione" />
+													<SelectValue placeholder="Selecione">
+														{formData.ministry && getMinistryLabel(formData.ministry)}
+													</SelectValue>
 												</SelectTrigger>
 												<SelectContent className='border border-neutral-800 bg-neutral-900 text-white'>
-													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="kidschurch">Igreja da criança</SelectItem>
-													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="musicteam">Ministério de louvor</SelectItem>
+													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="kidschurch">Igreja da Criança</SelectItem>
+													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="musicteam">Ministério de Louvor</SelectItem>
 													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="techinicalsuporte">Suporte Técnico</SelectItem>
-													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="sound">Técnico de som</SelectItem>
+													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="sound">Técnico de Som</SelectItem>
 													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="slide">Mídia Slide</SelectItem>
-													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="photograph">Mídia fotografia</SelectItem>
-													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="geralmidia">Mídia geral</SelectItem>
+													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="photograph">Mídia Fotografia</SelectItem>
+													<SelectItem className='bg-neutral-900 hover:bg-neutral-800' value="geralmidia">Mídia Geral</SelectItem>
 												</SelectContent>
 											</Select>
 										</div>
