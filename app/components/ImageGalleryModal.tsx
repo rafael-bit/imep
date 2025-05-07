@@ -48,7 +48,7 @@ export function ImageGalleryModal({ isOpen, onClose, onSelectImage }: ImageGalle
 
 	return (
 		<Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-			<DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-gray-900 text-white">
+			<DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto bg-neutral-900 text-white">
 				<DialogHeader>
 					<DialogTitle>Galeria de Imagens</DialogTitle>
 				</DialogHeader>

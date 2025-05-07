@@ -89,6 +89,15 @@ export const authOptions: AuthOptions = {
 		}),
 	],
 	callbacks: {
+		redirect: async ({ url, baseUrl }) => {
+			// Gerencia redirecionamentos após login
+			if (url.startsWith('/')) {
+				return `${baseUrl}${url}`
+			} else if (new URL(url).origin === baseUrl) {
+				return url
+			}
+			return baseUrl
+		},
 		jwt: async ({ token, user }) => {
 			if (user) {
 				const dbUser = await prisma.user.findUnique({

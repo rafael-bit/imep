@@ -27,11 +27,11 @@ const Header = () => {
 };
 
 export default function HeaderWrapper() {
-	const pathname = usePathname();
+  const pathname = usePathname();
 
-	if (pathname?.startsWith('/app') || pathname?.startsWith('/auth')) {
-		return null;
-	}
+  if (pathname?.startsWith('/app') || pathname?.startsWith('/auth')) {
+    return null;
+  }
 
-	return <Header />;
+  return <Header />;
 }
