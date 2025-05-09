@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Create token (excluindo o campo password)
-		const { password, ...userWithoutPassword } = user;
+		const userWithoutPassword = { ...user };
+		delete userWithoutPassword.password;
 		const token = await createToken(userWithoutPassword);
 
 		// Set cookie
-		const cookieStore = cookies();
+		const cookieStore = await cookies();
 		cookieStore.set('auth-token', token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',

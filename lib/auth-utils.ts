@@ -26,7 +26,7 @@ export async function verifyPassword(storedPassword: string, suppliedPassword: s
 }
 
 // JWT utils
-export async function createToken(payload: any) {
+export async function createToken(payload: Record<string, unknown>) {
 	const token = await new SignJWT(payload)
 		.setProtectedHeader({ alg: 'HS256' })
 		.setIssuedAt()
@@ -41,13 +41,14 @@ export async function verifyToken(token: string) {
 		const { payload } = await jwtVerify(token, key);
 		return payload;
 	} catch (error) {
+		console.error('Erro ao verificar token:', error);
 		return null;
 	}
 }
 
 // Session management
 export async function getSession() {
-	const cookieStore = cookies();
+	const cookieStore = await cookies();
 	const token = cookieStore.get('auth-token')?.value;
 
 	if (!token) return null;

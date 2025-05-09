@@ -3,8 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AccessDenied() {
+	const router = useRouter();
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center bg-neutral-900 px-4">
 			<div className="max-w-md w-full space-y-8">
@@ -27,7 +29,10 @@ export default function AccessDenied() {
 					<Button
 						variant="outline"
 						className="w-full"
-						onClick={() => signOut({ callbackUrl: '/auth' })}
+						onClick={() => {
+							signOut({ callbackUrl: '/auth' });
+							router.push('/');
+						}}
 					>
 						Sair
 					</Button>
