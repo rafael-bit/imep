@@ -2,6 +2,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
 import { createHash, randomBytes } from 'crypto';
+import { Role, SafeUser } from './types';
 
 const secretKey = process.env.JWT_SECRET || 'sua-chave-secreta-aqui';
 const key = new TextEncoder().encode(secretKey);
@@ -57,17 +58,20 @@ export async function getSession() {
 	return payload;
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<SafeUser | null> {
 	const session = await getSession();
 
 	if (!session) return null;
 
 	return {
-		id: session.id,
-		email: session.email,
-		name: session.name,
-		image: session.image,
-		isAdmin: session.isAdmin || false
+		id: session.id as string,
+		email: session.email as string,
+		name: session.name as string,
+		image: session.image as string,
+		isAdmin: Boolean(session.isAdmin),
+		role: (session.role as Role) || Role.USER,
+		churchId: session.churchId as string,
+		church: session.church as { id: string; name: string } || null
 	};
 }
 

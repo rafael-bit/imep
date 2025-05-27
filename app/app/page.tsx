@@ -1,119 +1,222 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AgendaForm } from '@/app/components/AgendaForm';
-import { AgendaList } from '@/app/components/AgendaList';
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Role, SafeUser } from '@/lib/types';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { Users, Building, Calendar, Wrench, Music, UserSquare2 } from 'lucide-react';
 
-interface Agenda {
-	id: string;
-	title: string;
-	description: string | null;
-	date: string;
-	image: string | null;
-	createdAt: string;
-	updatedAt: string;
-}
-
-export default function Dashboard() {
-	const [agendas, setAgendas] = useState<Agenda[]>([]);
+export default function MasterDashboard() {
+	const [user, setUser] = useState<SafeUser | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState('');
-	const [selectedAgenda, setSelectedAgenda] = useState<Agenda | null>(null);
-
-	const fetchAgendas = async () => {
-		try {
-			setLoading(true);
-			const response = await fetch('/api/agenda');
-
-			if (!response.ok) {
-				throw new Error('Erro ao carregar agendas');
-			}
-
-			const data = await response.json();
-			setAgendas(data);
-			setError('');
-		} catch (err) {
-			setError('Falha ao carregar agendas');
-			console.error(err);
-		} finally {
-			setLoading(false);
-		}
-	};
+	const [stats, setStats] = useState({
+		users: 0,
+		churches: 0,
+		agendas: 0,
+	});
 
 	useEffect(() => {
-		fetchAgendas();
+		async function loadUser() {
+			try {
+				const response = await fetch('/api/auth/check-status');
+				const data = await response.json();
+
+				if (data.user) {
+					if (data.user.role !== Role.MASTER && data.user.role !== Role.DEVELOPER) {
+						redirect('/access-denied');
+					}
+					setUser(data.user);
+				} else {
+					redirect('/auth');
+				}
+			} catch (error) {
+				console.error('Error loading user:', error);
+				redirect('/auth');
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		async function loadStats() {
+			try {
+				const response = await fetch('/api/admin/stats');
+				const data = await response.json();
+				setStats(data);
+			} catch (error) {
+				console.error('Error loading stats:', error);
+			}
+		}
+
+		loadUser();
+		loadStats();
 	}, []);
 
-	const handleDelete = async (id: string) => {
-		try {
-			const response = await fetch(`/api/agenda/${id}`, {
-				method: 'DELETE'
-			});
-
-			if (!response.ok) {
-				throw new Error('Erro ao excluir agenda');
-			}
-
-			fetchAgendas();
-		} catch (err) {
-			setError('Falha ao excluir agenda');
-			console.error(err);
-		}
-	};
-
-	const handleEdit = (agenda: Agenda) => {
-		setSelectedAgenda(agenda);
-	};
-
-	const handleFormSuccess = () => {
-		setSelectedAgenda(null);
-		fetchAgendas();
-	};
+	if (loading) {
+		return (
+			<div className="flex items-center justify-center min-h-screen">
+				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+			</div>
+		);
+	}
 
 	return (
-		<div className="container mx-auto py-8">
-			<div className="flex justify-between items-center mb-8 px-5">
-				<h1 className="text-3xl font-bold">Dashboard <span className='hidden sm:inline-block'>de Agendas</span></h1>
-				<Sheet>
-					<SheetTrigger asChild>
-						<Button>
-							<Plus className="mr-2 h-4 w-4" />
-							Nova Agenda
-						</Button>
-					</SheetTrigger>
-					<SheetContent className="bg-[#121212] border-none p-3 text-white">
-						<SheetTitle className="text-white">Adicionar Nova Agenda</SheetTitle>
-						<AgendaForm onSuccess={handleFormSuccess} />
-					</SheetContent>
-				</Sheet>
+		<div className="container mx-auto px-4 py-6">
+			<h1 className="text-3xl font-bold mb-6 text-white">Dashboard Master</h1>
+
+			{/* Stats cards */}
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+				<Card>
+					<CardHeader className="pb-2">
+						<CardTitle className="flex items-center text-lg">
+							<Users className="mr-2 h-5 w-5" />
+							Usuários
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p className="text-3xl font-bold">{stats.users}</p>
+						<p className="text-sm text-muted-foreground">Total de usuários no sistema</p>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardHeader className="pb-2">
+						<CardTitle className="flex items-center text-lg">
+							<Building className="mr-2 h-5 w-5" />
+							Igrejas
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p className="text-3xl font-bold">{stats.churches}</p>
+						<p className="text-sm text-muted-foreground">Total de igrejas no sistema</p>
+					</CardContent>
+				</Card>
+
+				<Card>
+					<CardHeader className="pb-2">
+						<CardTitle className="flex items-center text-lg">
+							<Calendar className="mr-2 h-5 w-5" />
+							Agendas
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<p className="text-3xl font-bold">{stats.agendas}</p>
+						<p className="text-sm text-muted-foreground">Total de eventos agendados</p>
+					</CardContent>
+				</Card>
 			</div>
 
-			{error && (
-				<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-					{error}
-				</div>
-			)}
+			<h2 className="text-2xl font-bold mb-4 text-white">Ferramentas de Administração</h2>
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+				<Link href="/admin-tools/users">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Users className="mr-2 h-5 w-5" />
+								Gerenciar Usuários
+							</CardTitle>
+							<CardDescription>
+								Adicione, edite e remova usuários
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Configure as permissões dos usuários do sistema, incluindo as funções de Mídia, Louvor e Obreiros.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
 
-			{loading ? (
-				<div className="flex justify-center">
-					<p>Carregando agendas...</p>
-				</div>
-			) : agendas.length === 0 ? (
-				<div className="text-center py-10">
-					<p className="text-gray-500">Nenhuma agenda encontrada. Crie uma nova agenda!</p>
-				</div>
-			) : (
-				<AgendaList
-					agendas={agendas}
-					onDelete={handleDelete}
-					onEdit={handleEdit}
-					selectedAgenda={selectedAgenda}
-					onFormSuccess={handleFormSuccess}
-				/>
-			)}
+				<Link href="/admin-tools/churches">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Building className="mr-2 h-5 w-5" />
+								Gerenciar Igrejas
+							</CardTitle>
+							<CardDescription>
+								Adicione, edite e remova igrejas
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Cadastre as igrejas no sistema para associação com usuários e organização das equipes.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+
+				<Link href="/admin-tools">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Wrench className="mr-2 h-5 w-5" />
+								Outras Ferramentas
+							</CardTitle>
+							<CardDescription>
+								Acesse ferramentas adicionais
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Promover usuários a administradores e outras configurações avançadas do sistema.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+			</div>
+
+			<h2 className="text-2xl font-bold mb-4 text-white">Acesso às Áreas</h2>
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<Link href="/dashboard">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Calendar className="mr-2 h-5 w-5" />
+								Dashboard Geral
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Acesse o dashboard geral com visão de todas as funções.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+
+				<Link href="/dashboard/agendas">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Calendar className="mr-2 h-5 w-5" />
+								Área de Mídia
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Acesse as ferramentas de gerenciamento de mídia, agendas e galerias.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+
+				<Link href="/dashboard/playlists">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Music className="mr-2 h-5 w-5" />
+								Área de Louvor
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Acesse as ferramentas de gerenciamento de playlists e equipes de louvor.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+			</div>
 		</div>
 	);
 } 

@@ -12,8 +12,8 @@ export default function Hero() {
 					Igreja Missões do Evangelho Pleno
 				</h1>
 				<div className="w-full md:w-1/3 flex flex-col gap-4 pb-3">
-					<Link href="/" className="bg-white text-black border border-white px-6 py-2 rounded-md hover:bg-transparent hover:text-white transition-all duration-300 text-center">Nossas Agendas</Link>
-					<Link href="/" className="border border-white px-6 py-2 rounded-md hover:bg-white bg-transparent hover:text-black text-white transition-all duration-300 text-center">Sobre Nós</Link>
+					<Link href="/agenda" className="bg-white text-black border border-white px-6 py-2 rounded-md hover:bg-transparent hover:text-white transition-all duration-300 text-center">Nossas Agendas</Link>
+					<Link href="/nossos-valores" className="border border-white px-6 py-2 rounded-md hover:bg-white bg-transparent hover:text-black text-white transition-all duration-300 text-center">Nossos Valores</Link>
 				</div>
 			</div>
 		</section>

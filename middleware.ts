@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
+import { Role } from '@/lib/types'
 
 export async function middleware(request: NextRequest) {
 	const pathname = request.nextUrl.pathname
 	const baseUrl = new URL('/', request.url).origin
 
-	// CORS handling for API routes
 	if (pathname.startsWith('/api/')) {
 		const response = NextResponse.next()
 
@@ -21,7 +21,6 @@ export async function middleware(request: NextRequest) {
 		return response
 	}
 
-	// Public routes - always allowed
 	if (pathname.includes('/favicon.ico') ||
 		pathname.startsWith('/_next') ||
 		pathname === '/' ||
@@ -32,7 +31,6 @@ export async function middleware(request: NextRequest) {
 		return NextResponse.next()
 	}
 
-	// Check for auth token
 	const token = request.cookies.get('auth-token')?.value
 	let user = null
 
@@ -47,28 +45,54 @@ export async function middleware(request: NextRequest) {
 		}
 	}
 
-	// Already logged in trying to access auth page
 	if (pathname === '/auth' && user) {
-		if (user.isAdmin) {
+		if (user.role === Role.DEVELOPER || user.role === Role.MASTER || user.isAdmin) {
 			return NextResponse.redirect(new URL('/app', baseUrl))
+		} else if (['MEDIA_CHURCH', 'WORSHIP_CHURCH', 'WORKERS'].includes(user.role)) {
+			return NextResponse.redirect(new URL('/dashboard', baseUrl))
 		} else {
 			return NextResponse.redirect(new URL('/access-denied', baseUrl))
 		}
 	}
 
-	// Protected admin routes
-	if (pathname.startsWith('/app') || pathname.startsWith('/admin-tools')) {
+	if (pathname === '/app' || pathname.startsWith('/app/')) {
 		if (!user) {
 			console.log('Usuário não autenticado tentando acessar área restrita')
 			return NextResponse.redirect(new URL('/auth', baseUrl))
 		}
 
-		if (!user.isAdmin) {
+		if (!(user.role === Role.DEVELOPER || user.role === Role.MASTER)) {
+			console.log('Usuário sem privilégios de master tentando acessar área restrita')
+			return NextResponse.redirect(new URL('/access-denied', baseUrl))
+		}
+
+		console.log('Acesso permitido para usuário master:', user.email)
+	}
+
+	if (pathname.startsWith('/admin-tools')) {
+		if (!user) {
+			console.log('Usuário não autenticado tentando acessar área restrita')
+			return NextResponse.redirect(new URL('/auth', baseUrl))
+		}
+
+		if (!(user.role === Role.DEVELOPER || user.role === Role.MASTER || user.isAdmin)) {
 			console.log('Usuário sem privilégios de admin tentando acessar área restrita')
 			return NextResponse.redirect(new URL('/access-denied', baseUrl))
 		}
 
 		console.log('Acesso permitido para usuário admin:', user.email)
+	}
+
+	if (pathname.startsWith('/dashboard')) {
+		if (!user) {
+			console.log('Usuário não autenticado tentando acessar área restrita')
+			return NextResponse.redirect(new URL('/auth', baseUrl))
+		}
+
+		if (!(['MEDIA_CHURCH', 'WORSHIP_CHURCH', 'WORKERS', 'MASTER', 'DEVELOPER'].includes(user.role) || user.isAdmin)) {
+			console.log('Usuário sem privilégios tentando acessar dashboard')
+			return NextResponse.redirect(new URL('/access-denied', baseUrl))
+		}
 	}
 
 	return NextResponse.next()

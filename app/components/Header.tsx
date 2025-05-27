@@ -5,6 +5,7 @@ import Image from "next/image";
 import MainNav from "./MainNav";
 import MobileNav from "./MobileNav";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const Header = () => {
   return (
@@ -20,6 +21,13 @@ const Header = () => {
           />
         </Link>
         <MainNav />
+        <div className="hidden md:flex items-center gap-4">
+          <Link href="/dashboard">
+            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-black">
+              Acessar Sistema
+            </Button>
+          </Link>
+        </div>
         <MobileNav />
       </div>
     </header>
@@ -29,7 +37,7 @@ const Header = () => {
 export default function HeaderWrapper() {
   const pathname = usePathname();
 
-  if (pathname?.startsWith('/app') || pathname?.startsWith('/auth')) {
+  if (pathname?.startsWith('/dashboard') || pathname?.startsWith('/app') || pathname?.startsWith('/auth') || pathname?.startsWith('/login') || pathname?.startsWith('/register')) {
     return null;
   }
 

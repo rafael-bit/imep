@@ -1,51 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-import path from 'path';
-import { mkdir, writeFile } from 'fs/promises';
+import { uploadMultipleFiles } from '@/lib/uploadService';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
 	try {
+		const session = await getServerSession(authOptions);
+
+		if (!session) {
+			return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
+		}
+
+		// Obter os dados do formulário (multipart/form-data)
 		const formData = await request.formData();
-		const file = formData.get('file') as File;
+		const folder = formData.get('folder') as string || 'uploads';
 
-		if (!file) {
-			return NextResponse.json(
-				{ error: 'Nenhum arquivo foi enviado' },
-				{ status: 400 }
-			);
+		// Obter os arquivos do formulário
+		const files = [];
+		for (const [key, value] of formData.entries()) {
+			if (value instanceof File && key.startsWith('file')) {
+				const buffer = await value.arrayBuffer();
+				files.push({
+					buffer: Buffer.from(buffer),
+					originalname: value.name,
+					mimetype: value.type,
+				});
+			}
 		}
 
-		const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-		if (!validTypes.includes(file.type)) {
-			return NextResponse.json(
-				{ error: 'Tipo de arquivo não suportado. Apenas imagens são permitidas.' },
-				{ status: 400 }
-			);
+		if (files.length === 0) {
+			return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 });
 		}
 
-		const uploadsDir = path.join(process.cwd(), 'public/uploads');
-		await mkdir(uploadsDir, { recursive: true });
+		// Fazer upload dos arquivos localmente
+		const urls = await uploadMultipleFiles(files, folder);
 
-		const fileExtension = path.extname(file.name);
-		const fileName = `${uuidv4()}${fileExtension}`;
-		const filePath = path.join(uploadsDir, fileName);
-
-		const bytes = await file.arrayBuffer();
-		const buffer = Buffer.from(bytes);
-
-		await writeFile(filePath, buffer);
-		
-		return NextResponse.json({
-			url: `/uploads/${fileName}`,
-			success: true
-		});
+		return NextResponse.json({ urls });
 	} catch (error) {
-		console.error('Erro ao processar upload:', error);
+		console.error('Erro no upload de arquivo:', error);
 		return NextResponse.json(
-			{
-				error: 'Erro ao processar upload',
-				details: error instanceof Error ? error.message : String(error)
-			},
+			{ error: 'Erro ao processar o upload de arquivos' },
 			{ status: 500 }
 		);
 	}

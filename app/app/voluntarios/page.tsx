@@ -135,7 +135,7 @@ export default function Voluntarios() {
 								{loading ? (
 									<div className="flex justify-center py-8">Carregando voluntários...</div>
 								) : volunteers.length === 0 ? (
-									<div className="text-center py-8">Nenhum voluntário cadastrado</div>
+									<div className="text-center py-8 text-neutral-100">Nenhum voluntário cadastrado</div>
 								) : (
 									<div className="overflow-x-auto">
 										<Table>

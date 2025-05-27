@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { loginSchema, registerSchema } from '@/lib/validations/auth'
 import type { LoginInput, RegisterInput } from '@/lib/validations/auth'
@@ -69,11 +70,17 @@ export default function AuthForm() {
 			<Card className='border-neutral-500 p-6 md:p-8 lg:p-10 w-full max-w-md md:max-w-lg lg:max-w-xl flex flex-col items-center justify-center bg-neutral-900'>
 				<div className='flex flex-col items-center justify-center w-full'>
 					<CardHeader className='w-full flex flex-col items-center'>
-						<Image src={'/logo.png'} alt="" width={120} height={120} className='mb-12' />
+						<Image src={'/logo.png'} alt="" width={120} height={120} className='mb-6' />
 						<CardTitle className='text-3xl text-center text-neutral-100'>
-							<h2>{isLogin ? 'Entre em sua conta' : 'Crie sua conta'}</h2>
+							<h2>IMEP</h2>
 						</CardTitle>
-						<CardDescription className='text-center pb-12'>
+						<CardDescription className='text-center mb-6'>
+							Sistema de Gerenciamento
+						</CardDescription>
+						<CardTitle className='text-2xl text-center text-neutral-100 mt-2'>
+							<h3>{isLogin ? 'Entre em sua conta' : 'Crie sua conta'}</h3>
+						</CardTitle>
+						<CardDescription className='text-center pb-6'>
 							{isLogin ? (
 								<>
 									Novo por aqui? {' '}
@@ -206,6 +213,12 @@ export default function AuthForm() {
 								</Button>
 							</form>
 						)}
+
+						<div className="text-center text-sm mt-6">
+							<Link href="/" className="text-neutral-400 hover:text-neutral-200">
+								Voltar para a página inicial
+							</Link>
+						</div>
 					</CardContent>
 				</div>
 			</Card>

@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, UserPlus, Building, Users, Settings, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AdminToolsPage() {
 	const [email, setEmail] = useState('');
@@ -47,12 +48,81 @@ export default function AdminToolsPage() {
 	};
 
 	return (
-		<div className="container max-w-md mx-auto py-12">
-			<Card>
+		<div className="container mx-auto py-12 px-4">
+			<div className="flex justify-between items-center mb-8">
+				<h1 className="text-3xl font-bold text-neutral-100">Ferramentas de Administração</h1>
+				<Link href="/app">
+					<Button variant="outline">
+						<ArrowLeft className="mr-2 h-4 w-4" />
+						Voltar para Dashboard
+					</Button>
+				</Link>
+			</div>
+
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+				<Link href="/admin-tools/users">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Users className="mr-2 h-5 w-5" />
+								Gerenciar Usuários
+							</CardTitle>
+							<CardDescription>
+								Adicione, edite e remova usuários
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Configure as permissões dos usuários do sistema, incluindo as funções de Mídia, Louvor e Obreiros.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+
+				<Link href="/admin-tools/churches">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Building className="mr-2 h-5 w-5" />
+								Gerenciar Igrejas
+							</CardTitle>
+							<CardDescription>
+								Adicione, edite e remova igrejas
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Cadastre as igrejas no sistema para associação com usuários e organização das equipes.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+
+				<Link href="/dashboard">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Settings className="mr-2 h-5 w-5" />
+								Dashboard Geral
+							</CardTitle>
+							<CardDescription>
+								Acessar o dashboard geral
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Acesse a visão geral com acesso a todos os recursos disponíveis no sistema.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+			</div>
+
+			<Card className="max-w-md mx-auto">
 				<CardHeader>
-					<CardTitle>Ferramentas de Administração</CardTitle>
+					<CardTitle>Promover Usuário a Admin</CardTitle>
 					<CardDescription>
-						Use esta página para gerenciar permissões de usuários.
+						Use esta ferramenta para promover um usuário a administrador.
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -108,7 +178,10 @@ export default function AdminToolsPage() {
 									Processando...
 								</>
 							) : (
-								'Promover a Administrador'
+								<>
+									<UserPlus className="mr-2 h-4 w-4" />
+									Promover a Administrador
+								</>
 							)}
 						</Button>
 					</form>

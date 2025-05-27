@@ -26,7 +26,7 @@ const Footer = () => {
 						<li><p>Sub-Sede: Rua Antônio Franscisco da Silva, 989</p></li>
 						<li><p>Telefone: (77) 9 9965-0202</p></li>
 					</ul>
-					<Link href="/" className="px-4 py-1 pb-1.5 text-white border border-white rounded-full hover:bg-white hover:text-black transition-all duration-300">Nossas Unidades</Link>
+					<Link href="/unidades" className="px-4 py-1 pb-1.5 text-white border border-white rounded-full hover:bg-white hover:text-black transition-all duration-300">Nossas Unidades</Link>
 				</ul>
 				<ul className="hidden sm:flex flex-col items-end sm:w-1/3">
 					<li><h3 className="mt-5 mb-3 text-xl font-bold">Navegue pelas páginas</h3></li>
@@ -46,7 +46,7 @@ const Footer = () => {
 export default function FooterWrapper() {
 	const pathname = usePathname();
 
-	if (pathname?.startsWith('/app') || pathname?.startsWith('/auth')) {
+	if (pathname?.startsWith('/dashboard') || pathname?.startsWith('/app') || pathname?.startsWith('/auth') || pathname?.startsWith('/login')) {
 		return null;
 	}
 

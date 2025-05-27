@@ -4,15 +4,14 @@ import { prisma } from '@/services/database';
 import { loginSchema } from '@/lib/validations/auth';
 import { createToken, verifyPassword } from '@/lib/auth-utils';
 import { ZodError } from 'zod';
+import { SafeUser } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json();
 
-		// Validate input data with Zod
 		const validatedData = loginSchema.parse(body);
 
-		// Find user
 		const user = await prisma.user.findUnique({
 			where: { email: validatedData.email },
 			select: {
@@ -20,7 +19,15 @@ export async function POST(request: NextRequest) {
 				name: true,
 				email: true,
 				isAdmin: true,
-				password: true
+				password: true,
+				role: true,
+				churchId: true,
+				church: {
+					select: {
+						id: true,
+						name: true
+					}
+				}
 			}
 		});
 
@@ -31,7 +38,6 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Verify password
 		const isValidPassword = await verifyPassword(
 			user.password,
 			validatedData.password
@@ -44,11 +50,10 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const userWithoutPassword = { ...user };
-		delete userWithoutPassword.password;
+		const userWithoutPassword = { ...user } as SafeUser;
+		delete (userWithoutPassword as any).password;
 		const token = await createToken(userWithoutPassword);
 
-		// Set cookie
 		const cookieStore = await cookies();
 		cookieStore.set('auth-token', token, {
 			httpOnly: true,
