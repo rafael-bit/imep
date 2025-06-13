@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-	title: "IMEP - Autenticação",
-	description: "Faça login para acessar o sistema IMEP",
+	title: "Regenere - Autenticação",
+	description: "Faça login para acessar o sistema Regenere",
 };
 
 export default function AuthLayout({

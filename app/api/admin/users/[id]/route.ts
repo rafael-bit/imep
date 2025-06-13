@@ -25,6 +25,7 @@ export async function GET(
 				email: true,
 				image: true,
 				isAdmin: true,
+				isLeader: true,
 				role: true,
 				churchId: true,
 				church: {
@@ -68,7 +69,7 @@ export async function PUT(
 		}
 
 		const body = await request.json();
-		const { name, email, password, role, churchId } = body;
+		const { name, email, password, role, churchId, isLeader } = body;
 
 		if (email) {
 			const existingUser = await prisma.user.findFirst({
@@ -92,6 +93,7 @@ export async function PUT(
 			role,
 			churchId: churchId || null,
 			isAdmin: role === Role.MASTER || role === Role.DEVELOPER,
+			isLeader: isLeader || false,
 		};
 
 		if (password) {
@@ -108,6 +110,7 @@ export async function PUT(
 				role: true,
 				churchId: true,
 				isAdmin: true,
+				isLeader: true,
 			},
 		});
 

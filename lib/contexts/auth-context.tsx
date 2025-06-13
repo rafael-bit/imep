@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Role } from '@/lib/types';
 
 interface User {
 	id: string;
@@ -10,6 +11,8 @@ interface User {
 	email?: string | null;
 	image?: string | null;
 	isAdmin?: boolean;
+	isLeader?: boolean;
+	role: Role;
 }
 
 interface AuthContextType {
@@ -18,6 +21,7 @@ interface AuthContextType {
 	login: (email: string, password: string) => Promise<void>;
 	register: (name: string, email: string, password: string) => Promise<void>;
 	logout: () => Promise<void>;
+	canEdit: (area: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -128,8 +132,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	};
 
+	const canEdit = (area: string) => {
+		if (!user) return false;
+
+		if (user.isAdmin || user.role === Role.MASTER || user.role === Role.DEVELOPER) {
+			return true;
+		}
+
+		if (user.isLeader) {
+			if (user.role === Role.MEDIA_CHURCH &&
+				['galeria', 'agenda', 'equipamentos'].includes(area)) {
+				return true;
+			}
+
+			if (user.role === Role.WORSHIP_CHURCH &&
+				['escala-louvor', 'musicas'].includes(area)) {
+				return true;
+			}
+
+			if (user.role === Role.WORKERS &&
+				['escala-obreiros'].includes(area)) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
 	return (
-		<AuthContext.Provider value={{ user, loading, login, register, logout }}>
+		<AuthContext.Provider value={{ user, loading, login, register, logout, canEdit }}>
 			{children}
 		</AuthContext.Provider>
 	);

@@ -83,7 +83,7 @@ function LoginForm() {
 		<div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
 			<div className="w-full max-w-md space-y-8 bg-gray-900 p-8 rounded-lg shadow-xl">
 				<div className="text-center">
-					<h1 className="text-3xl font-bold text-white">IMEP</h1>
+					<h1 className="text-3xl font-bold text-white">Regenere</h1>
 					<p className="mt-2 text-gray-400">Sistema de Gerenciamento</p>
 				</div>
 
@@ -161,7 +161,7 @@ export default function LoginPage() {
 			<div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
 				<div className="w-full max-w-md space-y-8 bg-gray-900 p-8 rounded-lg shadow-xl">
 					<div className="text-center">
-						<h1 className="text-3xl font-bold text-white">IMEP</h1>
+						<h1 className="text-3xl font-bold text-white">Regenere</h1>
 						<p className="mt-2 text-gray-400">Carregando...</p>
 					</div>
 				</div>

@@ -14,7 +14,7 @@ const Header = () => {
         <Link href="/">
           <Image
             src="/logo.png"
-            alt="Logo Imep"
+            alt="Logo Regenere"
             className="w-10 h-9"
             width={60}
             height={60}

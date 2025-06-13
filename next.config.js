@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
-	
+
+	// Output configuration for production builds
+	output: 'standalone',
+
 	eslint: {
 		ignoreDuringBuilds: true,
 	},

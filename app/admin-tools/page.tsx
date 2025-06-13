@@ -59,7 +59,7 @@ export default function AdminToolsPage() {
 				</Link>
 			</div>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
 				<Link href="/admin-tools/users">
 					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
 						<CardHeader>
@@ -93,6 +93,25 @@ export default function AdminToolsPage() {
 						<CardContent>
 							<p className="text-sm text-gray-500">
 								Cadastre as igrejas no sistema para associação com usuários e organização das equipes.
+							</p>
+						</CardContent>
+					</Card>
+				</Link>
+
+				<Link href="/app/voluntarios">
+					<Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+						<CardHeader>
+							<CardTitle className="flex items-center">
+								<Users className="mr-2 h-5 w-5" />
+								Gerenciar Voluntários
+							</CardTitle>
+							<CardDescription>
+								Visualize e gerencie os voluntários cadastrados
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<p className="text-sm text-gray-500">
+								Acesse a lista de voluntários que se cadastraram no site e gerencie suas informações.
 							</p>
 						</CardContent>
 					</Card>

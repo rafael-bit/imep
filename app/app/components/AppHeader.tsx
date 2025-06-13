@@ -15,7 +15,7 @@ export function AppHeader() {
 				<div className="bg-[#121212] shadow-sm">
 					<div className="container mx-auto py-4 px-4 flex flex-col sm:flex-row  gap-3 justify-between items-center">
 						<Link href="/" className="hover:underline">
-							<h1 className="text-xl font-bold">IMEP</h1>
+							<h1 className="text-xl font-bold">Regenere</h1>
 						</Link>
 						<nav>
 							<ul className="flex items-center gap-4">

@@ -11,6 +11,7 @@ import { AlertCircle, Loader2, Plus, Pencil, Trash, UserCog } from 'lucide-react
 import { Role, SafeUser } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Switch } from '@/components/ui/switch';
 
 interface Church {
 	id: string;
@@ -24,6 +25,7 @@ interface UserFormData {
 	password: string;
 	role: Role;
 	churchId: string;
+	isLeader: boolean;
 }
 
 export default function UserManagementPage() {
@@ -35,6 +37,7 @@ export default function UserManagementPage() {
 		password: '',
 		role: Role.USER,
 		churchId: '',
+		isLeader: false,
 	});
 	const [isEditing, setIsEditing] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -94,6 +97,7 @@ export default function UserManagementPage() {
 			password: '',
 			role: Role.USER,
 			churchId: '',
+			isLeader: false,
 		});
 		setIsEditing(false);
 	};
@@ -106,6 +110,7 @@ export default function UserManagementPage() {
 			password: '', // Password is not pre-filled when editing
 			role: user.role,
 			churchId: user.churchId || '',
+			isLeader: user.isLeader || false,
 		});
 		setIsEditing(true);
 		setDialogOpen(true);
@@ -282,6 +287,19 @@ export default function UserManagementPage() {
 								</Select>
 							</div>
 
+							{['MEDIA_CHURCH', 'WORSHIP_CHURCH', 'WORKERS'].includes(formData.role) && (
+								<div className="flex items-center space-x-2">
+									<Switch
+										id="isLeader"
+										checked={formData.isLeader}
+										onCheckedChange={(checked) =>
+											setFormData(prev => ({ ...prev, isLeader: checked }))
+										}
+									/>
+									<Label htmlFor="isLeader">Líder de departamento</Label>
+								</div>
+							)}
+
 							<Button
 								type="submit"
 								className="w-full"
@@ -334,13 +352,14 @@ export default function UserManagementPage() {
 									<TableHead>Email</TableHead>
 									<TableHead>Permissão</TableHead>
 									<TableHead>Igreja</TableHead>
+									<TableHead>Líder</TableHead>
 									<TableHead className="text-right">Ações</TableHead>
 								</TableRow>
 							</TableHeader>
 							<TableBody>
 								{users.length === 0 ? (
 									<TableRow>
-										<TableCell colSpan={5} className="text-center py-8 text-gray-500">
+										<TableCell colSpan={6} className="text-center py-8 text-gray-500">
 											Nenhum usuário encontrado
 										</TableCell>
 									</TableRow>
@@ -355,6 +374,17 @@ export default function UserManagementPage() {
 												</span>
 											</TableCell>
 											<TableCell>{user.church?.name || '-'}</TableCell>
+											<TableCell>
+												{user.isLeader ? (
+													<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+														Sim
+													</span>
+												) : (
+													<span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+														Não
+													</span>
+												)}
+											</TableCell>
 											<TableCell className="text-right">
 												<div className="flex justify-end gap-2">
 													<Button

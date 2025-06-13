@@ -17,12 +17,15 @@ import {
 	X,
 	LogOut
 } from 'lucide-react';
+import { useAuth } from '@/lib/contexts/auth-context';
 
 type NavItem = {
 	label: string;
 	href: string;
 	icon: React.ReactNode;
 	roles: Role[];
+	department: 'general' | 'media' | 'worship' | 'workers' | 'admin';
+	requiresEditPermission?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -31,6 +34,7 @@ const navItems: NavItem[] = [
 		href: '/dashboard',
 		icon: <HomeIcon className="h-5 w-5" />,
 		roles: [Role.MEDIA_CHURCH, Role.WORSHIP_CHURCH, Role.WORKERS, Role.MASTER, Role.DEVELOPER],
+		department: 'general'
 	},
 
 	// Mídia
@@ -39,68 +43,130 @@ const navItems: NavItem[] = [
 		href: '/dashboard/agendas',
 		icon: <Calendar className="h-5 w-5" />,
 		roles: [Role.MEDIA_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'media',
+		requiresEditPermission: true
 	},
 	{
 		label: 'Galeria',
 		href: '/dashboard/galeria',
 		icon: <Image className="h-5 w-5" />,
 		roles: [Role.MEDIA_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'media',
+		requiresEditPermission: true
 	},
 	{
 		label: 'Escala de Mídia',
 		href: '/dashboard/escala-midia',
 		icon: <UserSquare2 className="h-5 w-5" />,
 		roles: [Role.MEDIA_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'media',
+		requiresEditPermission: true
 	},
+
 	// Louvor
 	{
 		label: 'Playlists',
 		href: '/dashboard/playlists',
 		icon: <Music className="h-5 w-5" />,
 		roles: [Role.WORSHIP_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'worship',
+		requiresEditPermission: true
 	},
 	{
 		label: 'Repertório',
 		href: '/dashboard/repertorio',
 		icon: <Music className="h-5 w-5" />,
 		roles: [Role.WORSHIP_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'worship',
+		requiresEditPermission: true
 	},
 	{
 		label: 'Escala de Louvor',
 		href: '/dashboard/escala-louvor',
 		icon: <UserSquare2 className="h-5 w-5" />,
 		roles: [Role.WORSHIP_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'worship',
+		requiresEditPermission: true
 	},
+
 	// Obreiros
 	{
 		label: 'Escala de Obreiros',
 		href: '/dashboard/escala-obreiros',
 		icon: <UserSquare2 className="h-5 w-5" />,
 		roles: [Role.WORKERS, Role.MASTER, Role.DEVELOPER],
+		department: 'workers',
+		requiresEditPermission: true
 	},
-	// Comum
+
+	// Equipamentos - agora específico para mídia
 	{
 		label: 'Equipamentos',
 		href: '/dashboard/equipamentos',
 		icon: <Wrench className="h-5 w-5" />,
-		roles: [Role.MEDIA_CHURCH, Role.WORSHIP_CHURCH, Role.MASTER, Role.DEVELOPER],
+		roles: [Role.MEDIA_CHURCH, Role.MASTER, Role.DEVELOPER],
+		department: 'media',
+		requiresEditPermission: true
 	},
+
 	// Acesso Master
 	{
 		label: 'Admin',
 		href: '/app',
 		icon: <Settings className="h-5 w-5" />,
 		roles: [Role.MASTER, Role.DEVELOPER],
+		department: 'admin'
 	},
 ];
 
 export default function DashboardNav({ user }: { user: SafeUser }) {
+	const { canEdit } = useAuth();
 	const pathname = usePathname();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-	const filteredNavItems = navItems.filter(item =>
-		item.roles.includes(user.role) || user.isAdmin
-	);
+	// Verifica se o usuário é admin/master/developer
+	const isAdmin = user.isAdmin || user.role === Role.MASTER || user.role === Role.DEVELOPER;
+
+	// Filtra os itens de navegação com base no papel do usuário
+	const filteredNavItems = navItems.filter(item => {
+		// Verifica se o usuário tem o papel necessário
+		const hasRole = item.roles.includes(user.role);
+
+		// Verifica se o usuário tem permissão para editar, se necessário
+		const hasEditPermission = !item.requiresEditPermission || canEdit(item.href.split('/').pop() || '');
+
+		// Admins podem ver todos os itens
+		if (isAdmin) return true;
+
+		return hasRole && hasEditPermission;
+	});
+
+	// Agrupa os itens por departamento
+	const generalItems = filteredNavItems.filter(item => item.department === 'general');
+
+	// Obtem apenas os itens do departamento do usuário para usuários não admin
+	let departmentItems: NavItem[] = [];
+	let departmentTitle = '';
+
+	if (!isAdmin) {
+		switch (user.role) {
+			case Role.MEDIA_CHURCH:
+				departmentItems = filteredNavItems.filter(item => item.department === 'media');
+				departmentTitle = 'Mídia';
+				break;
+			case Role.WORSHIP_CHURCH:
+				departmentItems = filteredNavItems.filter(item => item.department === 'worship');
+				departmentTitle = 'Louvor';
+				break;
+			case Role.WORKERS:
+				departmentItems = filteredNavItems.filter(item => item.department === 'workers');
+				departmentTitle = 'Obreiros';
+				break;
+		}
+	} else {
+		// Para admins, mostra itens agrupados por departamento
+		departmentTitle = 'Todos os Departamentos';
+	}
 
 	const handleLogout = async () => {
 		try {
@@ -123,13 +189,110 @@ export default function DashboardNav({ user }: { user: SafeUser }) {
 			case Role.DEVELOPER:
 				return 'Dashboard Admin';
 			default:
-				return 'IMEP Dashboard';
+				return 'Regenere Dashboard';
 		}
 	};
 
 	useEffect(() => {
 		setIsMobileMenuOpen(false);
 	}, [pathname]);
+
+	const renderNavItems = () => {
+		if (isAdmin) {
+			return (
+				<>
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							Geral
+						</h3>
+						<ul className="space-y-1">
+							{generalItems.map(renderNavItem)}
+						</ul>
+					</div>
+
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							Mídia
+						</h3>
+						<ul className="space-y-1">
+							{navItems.filter(item => item.department === 'media').map(renderNavItem)}
+						</ul>
+					</div>
+
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							Louvor
+						</h3>
+						<ul className="space-y-1">
+							{navItems.filter(item => item.department === 'worship').map(renderNavItem)}
+						</ul>
+					</div>
+
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							Obreiros
+						</h3>
+						<ul className="space-y-1">
+							{navItems.filter(item => item.department === 'workers').map(renderNavItem)}
+						</ul>
+					</div>
+
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							Administração
+						</h3>
+						<ul className="space-y-1">
+							{navItems.filter(item => item.department === 'admin').map(renderNavItem)}
+						</ul>
+					</div>
+				</>
+			);
+		} else {
+			// Para usuários comuns, mostra apenas itens gerais e do seu departamento
+			return (
+				<>
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							Geral
+						</h3>
+						<ul className="space-y-1">
+							{generalItems.map(renderNavItem)}
+						</ul>
+					</div>
+
+					<div className="mb-4">
+						<h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">
+							{departmentTitle}
+						</h3>
+						<ul className="space-y-1">
+							{departmentItems.map(renderNavItem)}
+						</ul>
+					</div>
+				</>
+			);
+		}
+	};
+
+	// Renderiza um item de navegação
+	const renderNavItem = (item: NavItem) => (
+		<li key={item.href}>
+			<Link
+				href={item.href}
+				className={`flex items-center px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${pathname === item.href
+						? 'bg-primary text-primary-foreground hover:bg-primary/90'
+						: 'text-gray-700 dark:text-gray-300'
+					}`}
+			>
+				{item.icon}
+				<span className="ml-3">{item.label}</span>
+				{item.requiresEditPermission && user.isLeader && (
+					<span className="ml-auto rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+						Editar
+					</span>
+				)}
+			</Link>
+		</li>
+	);
 
 	return (
 		<>
@@ -151,22 +314,7 @@ export default function DashboardNav({ user }: { user: SafeUser }) {
 				</div>
 
 				<nav className="flex-1 overflow-y-auto p-4">
-					<ul className="space-y-2">
-						{filteredNavItems.map((item) => (
-							<li key={item.href}>
-								<Link
-									href={item.href}
-									className={`flex items-center px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${pathname === item.href
-										? 'bg-primary text-primary-foreground hover:bg-primary/90'
-										: 'text-gray-700 dark:text-gray-300'
-										}`}
-								>
-									{item.icon}
-									<span className="ml-3">{item.label}</span>
-								</Link>
-							</li>
-						))}
-					</ul>
+					{renderNavItems()}
 				</nav>
 
 				<div className="p-4 border-t">
@@ -210,22 +358,7 @@ export default function DashboardNav({ user }: { user: SafeUser }) {
 						</div>
 
 						<nav className="flex-1 overflow-y-auto p-4">
-							<ul className="space-y-2">
-								{filteredNavItems.map((item) => (
-									<li key={item.href}>
-										<Link
-											href={item.href}
-											className={`flex items-center px-4 py-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${pathname === item.href
-												? 'bg-primary text-primary-foreground hover:bg-primary/90'
-												: 'text-gray-700 dark:text-gray-300'
-												}`}
-										>
-											{item.icon}
-											<span className="ml-3">{item.label}</span>
-										</Link>
-									</li>
-								))}
-							</ul>
+							{renderNavItems()}
 						</nav>
 
 						<div className="p-4 border-t">

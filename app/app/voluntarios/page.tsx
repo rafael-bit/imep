@@ -9,6 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatDistance } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type Volunteer = {
 	id: string;
@@ -104,7 +106,15 @@ export default function Voluntarios() {
 	return (
 		<div className="min-h-screen bg-[#121212] text-white py-16 px-4">
 			<div className="container mx-auto max-w-6xl">
-				<h1 className="text-4xl font-bold text-center mb-8">Gerenciamento de Voluntários</h1>
+				<div className="flex justify-between items-center mb-8">
+					<h1 className="text-4xl font-bold">Gerenciamento de Voluntários</h1>
+					<Link href="/admin-tools">
+						<Button variant="outline" className="text-neutral-100 hover:bg-neutral-800">
+							<ArrowLeft className="mr-2 h-4 w-4" />
+							Voltar para Admin
+						</Button>
+					</Link>
+				</div>
 
 				<Tabs defaultValue="all" className="w-full">
 					<TabsList className="grid grid-cols-3 mb-6">

@@ -125,7 +125,7 @@ export default function Page() {
 					<div className='py-12 px-10 flex flex-col justify-center relative w-full'>
 						<CardHeader>
 							<CardTitle className='text-4xl text-center text-white'>Eu quero ser um voluntário</CardTitle>
-							<CardDescription className='mt-5 text-center'>Se quiser ser um voluntário do IMEP, preencha o formulário abaixo</CardDescription>
+							<CardDescription className='mt-5 text-center'>Se quiser ser um voluntário da Regenere, preencha o formulário abaixo</CardDescription>
 						</CardHeader>
 						<CardContent>
 							<form onSubmit={handleSubmit}>

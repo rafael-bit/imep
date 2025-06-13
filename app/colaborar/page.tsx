@@ -6,7 +6,7 @@ export default function Colaborar() {
 			<h1 className='text-2xl font-semibold text-center my-10'>Colabore conosco</h1>
 			<div className="flex flex-col md:flex-row items-center">
 				<div className="w-full md:w-1/2 flex flex-col items-center">
-					<Image src="/logo.png" alt="IMEP logo" width={50} height={50} className="mb-5" />
+					<Image src="/logo.png" alt="Regenere logo" width={50} height={50} className="mb-5" />
 					<h2 className="text-2xl mb-8"><b>Você pode ofertar</b> por:</h2>
 
 					<div className="relative my-1 w-full max-w-md mb-7">
@@ -40,7 +40,7 @@ export default function Colaborar() {
 						<p className="mb-4"><span className="font-bold">Agência:</span> 0947</p>
 						<p className="mb-4"><span className="font-bold">Conta:</span> 578331085-5</p>
 						<p className="mb-4"><span className="font-bold">CNPJ:</span> 05.745.949/0001-34</p>
-						<p><span className="font-bold">Favorecido:</span> Igreja Missões do Evangelho Pleno</p>
+						<p><span className="font-bold">Favorecido:</span> Igreja Batista Regenere</p>
 					</div>
 				</div>
 			</div>

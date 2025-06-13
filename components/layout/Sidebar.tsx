@@ -138,7 +138,7 @@ const Sidebar = () => {
 			>
 				<div className="h-full px-3 py-4 flex flex-col">
 					<div className="mb-8 mt-2 text-center">
-						<h2 className="text-2xl font-bold">IMEP</h2>
+						<h2 className="text-2xl font-bold">Regenere</h2>
 						<p className="text-gray-400 text-sm">Sistema de Gerenciamento</p>
 					</div>
 

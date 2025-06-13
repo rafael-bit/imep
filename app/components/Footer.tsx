@@ -11,12 +11,12 @@ const Footer = () => {
 			<div className="sm:flex justify-around container mx-auto text-white">
 				<ul className="p-5 sm:w-1/3">
 					<li className="flex justify-center sm:justify-start items-center gap-2">
-						<Image src={'/logo.png'} alt="Logo Imep" className="w-12 h-10" width={70} height={70} />
-						<h1 className="text-3xl font-bold">IMEP</h1>
+						<Image src={'/logo.png'} alt="Logo Regenere" className="w-12 h-10" width={70} height={70} />
+						<h1 className="text-3xl font-bold">Regenere</h1>
 					</li>
-					<li className="mt-5 hidden sm:inline-block text-sm"><p>A IMEP é uma comunidade cristã comprometida em viver e anunciar o amor de Jesus. Cremos na Palavra de Deus como verdade e buscamos diariamente uma vida guiada pelo Espírito Santo.</p></li>
+					<li className="mt-5 hidden sm:inline-block text-sm"><p>A Regenere é uma comunidade cristã comprometida em viver e anunciar o amor de Jesus. Cremos na Palavra de Deus como verdade e buscamos diariamente uma vida guiada pelo Espírito Santo.</p></li>
 					<li className="mt-5 sm:mt-10 text-center sm:text-left">
-						<p>&copy; {new Date().getFullYear()} Igreja Missões do Evangelho Pleno.</p>
+						<p>&copy; {new Date().getFullYear()} Igreja Batista Regenere.</p>
 					</li>
 				</ul>
 				<ul className="w-full flex flex-col items-center justify-center sm:inline-block pt-7 sm:w-1/4">

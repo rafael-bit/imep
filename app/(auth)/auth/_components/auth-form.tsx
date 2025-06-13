@@ -72,7 +72,7 @@ export default function AuthForm() {
 					<CardHeader className='w-full flex flex-col items-center'>
 						<Image src={'/logo.png'} alt="" width={120} height={120} className='mb-6' />
 						<CardTitle className='text-3xl text-center text-neutral-100'>
-							<h2>IMEP</h2>
+							<h2>Regenere</h2>
 						</CardTitle>
 						<CardDescription className='text-center mb-6'>
 							Sistema de Gerenciamento

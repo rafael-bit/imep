@@ -2,6 +2,47 @@ import { NextRequest, NextResponse } from 'next/server'
 import { jwtVerify } from 'jose'
 import { Role } from '@/lib/types'
 
+// Função para verificar se o usuário tem permissão para acessar uma rota específica
+const canAccessRoute = (user: any, pathname: string) => {
+	// Administradores, Masters e Developers têm acesso a tudo
+	if (user.isAdmin || user.role === Role.MASTER || user.role === Role.DEVELOPER) {
+		return true;
+	}
+
+	// Permissões para líderes de departamento
+	if (user.isLeader) {
+		// Líderes de mídia podem editar recursos de mídia
+		if (user.role === Role.MEDIA_CHURCH &&
+			(pathname.includes('/dashboard/galeria') ||
+				pathname.includes('/dashboard/agenda') ||
+				pathname.includes('/dashboard/equipamentos'))) {
+			return true;
+		}
+
+		// Líderes de louvor podem editar recursos de louvor
+		if (user.role === Role.WORSHIP_CHURCH &&
+			(pathname.includes('/dashboard/escala-louvor') ||
+				pathname.includes('/dashboard/musicas'))) {
+			return true;
+		}
+
+		// Líderes de obreiros podem editar recursos de obreiros
+		if (user.role === Role.WORKERS &&
+			pathname.includes('/dashboard/escala-obreiros')) {
+			return true;
+		}
+	}
+
+	// Acesso básico ao dashboard para todos os usuários com papéis válidos
+	if (['MEDIA_CHURCH', 'WORSHIP_CHURCH', 'WORKERS'].includes(user.role) &&
+		(pathname === '/dashboard' || pathname.startsWith('/dashboard/perfil'))) {
+		return true;
+	}
+
+	// Se não passou por nenhuma verificação acima, não tem permissão
+	return false;
+}
+
 export async function middleware(request: NextRequest) {
 	const pathname = request.nextUrl.pathname
 	const baseUrl = new URL('/', request.url).origin
@@ -92,6 +133,12 @@ export async function middleware(request: NextRequest) {
 		if (!(['MEDIA_CHURCH', 'WORSHIP_CHURCH', 'WORKERS', 'MASTER', 'DEVELOPER'].includes(user.role) || user.isAdmin)) {
 			console.log('Usuário sem privilégios tentando acessar dashboard')
 			return NextResponse.redirect(new URL('/access-denied', baseUrl))
+		}
+
+		// Verificação adicional para rotas específicas de departamento
+		if (pathname !== '/dashboard' && !canAccessRoute(user, pathname)) {
+			console.log('Usuário sem permissão para acessar recurso específico:', pathname)
+			return NextResponse.redirect(new URL('/dashboard', baseUrl))
 		}
 	}
 

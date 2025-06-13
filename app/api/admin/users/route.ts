@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
 				email: true,
 				image: true,
 				isAdmin: true,
+				isLeader: true,
 				role: true,
 				churchId: true,
 				church: {
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
 		}
 
 		const body = await request.json();
-		const { name, email, password, role, churchId } = body;
+		const { name, email, password, role, churchId, isLeader } = body;
 
 		const existingUser = await prisma.user.findUnique({
 			where: { email },
@@ -81,6 +82,7 @@ export async function POST(request: NextRequest) {
 				role: role as Role,
 				churchId: churchId || null,
 				isAdmin: role === Role.MASTER || role === Role.DEVELOPER,
+				isLeader: isLeader || false,
 			},
 			select: {
 				id: true,
@@ -89,6 +91,7 @@ export async function POST(request: NextRequest) {
 				role: true,
 				churchId: true,
 				isAdmin: true,
+				isLeader: true,
 			},
 		});
 

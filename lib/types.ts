@@ -22,6 +22,7 @@ export interface UserWithChurch {
 	emailVerified?: Date | null;
 	image?: string | null;
 	isAdmin: boolean;
+	isLeader: boolean;
 	role: Role;
 	churchId?: string | null;
 	church?: {

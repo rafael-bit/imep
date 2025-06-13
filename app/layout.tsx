@@ -8,8 +8,8 @@ import FooterWrapper from './components/Footer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "IMEP - Igreja Missões do Evangelho Pleno",
-  description: "Site oficial da Igreja Missões do Evangelho Pleno",
+  title: "Igreja Batista Regenere",
+  description: "Site oficial da Igreja Batista Regenere",
 };
 
 export default function RootLayout({

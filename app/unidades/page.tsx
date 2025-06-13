@@ -4,33 +4,93 @@ import Image from 'next/image';
 const locations = [
 	{
 		id: 1,
-		name: 'IMEP Sede',
-		address: 'Av. Principal, 123 - Centro',
-		city: 'São Paulo - SP',
-		phone: '(11) 1234-5678',
-		email: 'contato@imep.org',
-		schedule: 'Domingo: 10h e 18h',
+		name: 'Igreja Batista Regenere Sede',
+		address: 'Av. Coronel Tiberio Meira, 447 - Centro',
+		city: 'Brumado - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 18h 30min, Terça - 19h 30min, Sábado - 18h 30min',
 		image: '/locations/sede.jpg'
 	},
 	{
 		id: 2,
-		name: 'IMEP Zona Norte',
-		address: 'Rua das Flores, 456 - Zona Norte',
-		city: 'São Paulo - SP',
-		phone: '(11) 8765-4321',
-		email: 'zonanorte@imep.org',
-		schedule: 'Domingo: 9h e 17h',
-		image: '/locations/zona-norte.jpg'
+		name: 'Igreja Batista Regenere Sub-Sede',
+		address: 'Rua Antônio Francisco da Silva, 989 - Olhos D\'Água',
+		city: 'Brumado - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 18h 30min, Terça - 19h 30min, Quarta - 19h 30min',
+		image: '/locations/subsede.jpg'
 	},
 	{
 		id: 3,
-		name: 'IMEP Zona Sul',
-		address: 'Av. dos Ipês, 789 - Zona Sul',
-		city: 'São Paulo - SP',
-		phone: '(11) 2345-6789',
-		email: 'zonasul@imep.org',
-		schedule: 'Domingo: 10h e 18h30',
+		name: 'Igreja Batista Regenere Das Flores',
+		address: 'Rua João XXIII, 274 - Das Flores',
+		city: 'Brumado - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 18h 30min, Terça - 19h 30min',
+		image: '/locations/flores.jpg'
+	},
+	{
+		id: 4,
+		name: 'Igreja Batista Regenere Baraúnas',
+		address: 'Av. Brasil, 52 - Baraúnas',
+		city: 'Brumado - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 18h 30min, Terça - 19h 30min',
+		image: '/locations/baraunas.jpg'
+	},
+	{
+		id: 5,
+		name: 'Igreja Batista Regenere São Felix',
+		address: 'Rua Elías Barbosa, 26 - São Felix',
+		city: 'Brumado - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 18h 30min, Terça - 19h 30min',
+		image: '/locations/saofelix.jpg'
+	},
+	{
+		id: 6,
+		name: 'Igreja Batista Regenere Uberaba',
+		address: 'Rua João Batista J. Gonçalves, 500 - Uberaba',
+		city: 'Uberaba - MG',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 19h 30min, Terça - 19h 30min, Quarta - 19h 30min, Sexta - 19h 30min, Sábado - 19h 30min',
 		image: '/locations/zona-sul.jpg'
+	},
+	{
+		id: 7,
+		name: 'Igreja Batista Regenere Suzano',
+		address: 'Av. Senador Roberto Simonsen, 1351 - Suzano',
+		city: 'Suzano - SP',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 19h, Terça - 19h 30min, Quarta - 19h 30min, Sábado - 19h 30min',
+		image: '/locations/suzano.jpg'
+	},
+	{
+		id: 8,
+		name: 'Igreja Batista Regenere Caetite',
+		address: 'Rua Paramirim, 283 - Caetite',
+		city: 'Caetite - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 19h 30min, Quinta - 19h 30min',
+		image: '/locations/zona-sul.jpg'
+	},
+	{
+		id: 9,
+		name: 'Igreja Batista Regenere Guanambi',
+		address: 'Av. Santos Dumont, S/N - Guanambi',
+		city: 'Guanambi - BA',
+		phone: '(77) 9 9965-0202',
+		email: 'imepsede@gmail.com',
+		schedule: 'Domingo - 19h 30min, Quinta - 19h 30min',
+		image: '/locations/guanambi.jpg'
 	}
 ];
 
