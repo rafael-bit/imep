@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import WorkerSchedule from '@/lib/models/WorkerSchedule';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -15,45 +13,29 @@ export async function GET(request: NextRequest) {
 
 		const { searchParams } = new URL(request.url);
 		const churchId = searchParams.get('churchId');
-		const role = searchParams.get('role');
-		const startDate = searchParams.get('startDate');
-		const endDate = searchParams.get('endDate');
 
 		if (!churchId) {
 			return NextResponse.json({ error: 'ID da igreja não fornecido' }, { status: 400 });
 		}
 
-		// Construir query
-		const query: any = { churchId };
-
-		if (role) {
-			query.role = role;
-		}
-
-		if (startDate || endDate) {
-			query.date = {};
-			if (startDate) {
-				query.date.$gte = new Date(startDate);
+		const workerSchedules = await prisma.workerSchedule.findMany({
+			where: {
+				churchId: churchId
+			},
+			orderBy: {
+				date: 'desc'
 			}
-			if (endDate) {
-				query.date.$lte = new Date(endDate);
-			}
-		}
+		});
 
-		const schedules = await WorkerSchedule.find(query)
-			.populate('memberId', 'name')
-			.sort({ date: 1 });
-
-		return NextResponse.json(schedules);
+		return NextResponse.json(workerSchedules);
 	} catch (error) {
-		console.error('Erro ao buscar escalas de obreiros:', error);
+		console.error('Erro ao buscar cronogramas de trabalho:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 }
 
 export async function POST(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -62,23 +44,22 @@ export async function POST(request: NextRequest) {
 
 		const data = await request.json();
 
-		if (!data.date || !data.role || !data.memberId || !data.churchId) {
+		if (!data.title || !data.date || !data.churchId) {
 			return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
 		}
 
-		// Criar nova escala de obreiros
-		const schedule = await WorkerSchedule.create(data);
+		const workerSchedule = await prisma.workerSchedule.create({
+			data: {
+				title: data.title,
+				date: new Date(data.date),
+				description: data.description,
+				churchId: data.churchId,
+			}
+		});
 
-		return NextResponse.json(schedule, { status: 201 });
+		return NextResponse.json(workerSchedule, { status: 201 });
 	} catch (error) {
-		console.error('Erro ao criar escala de obreiros:', error);
-
-		if (error.code === 11000) {
-			return NextResponse.json({
-				error: 'Conflito: Já existe um obreiro escalado para esta função e posição'
-			}, { status: 409 });
-		}
-
+		console.error('Erro ao criar cronograma de trabalho:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 } 

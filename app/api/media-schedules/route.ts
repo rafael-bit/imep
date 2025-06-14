@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import MediaSchedule from '@/lib/models/MediaSchedule';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -15,45 +13,29 @@ export async function GET(request: NextRequest) {
 
 		const { searchParams } = new URL(request.url);
 		const churchId = searchParams.get('churchId');
-		const type = searchParams.get('type');
-		const startDate = searchParams.get('startDate');
-		const endDate = searchParams.get('endDate');
 
 		if (!churchId) {
 			return NextResponse.json({ error: 'ID da igreja não fornecido' }, { status: 400 });
 		}
 
-		// Construir query
-		const query: any = { churchId };
-
-		if (type) {
-			query.type = type;
-		}
-
-		if (startDate || endDate) {
-			query.date = {};
-			if (startDate) {
-				query.date.$gte = new Date(startDate);
+		const mediaSchedules = await prisma.mediaSchedule.findMany({
+			where: {
+				churchId: churchId
+			},
+			orderBy: {
+				date: 'desc'
 			}
-			if (endDate) {
-				query.date.$lte = new Date(endDate);
-			}
-		}
+		});
 
-		const schedules = await MediaSchedule.find(query)
-			.populate('memberId', 'name')
-			.sort({ date: 1 });
-
-		return NextResponse.json(schedules);
+		return NextResponse.json(mediaSchedules);
 	} catch (error) {
-		console.error('Erro ao buscar escalas de mídia:', error);
+		console.error('Erro ao buscar cronogramas de mídia:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 }
 
 export async function POST(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -62,23 +44,22 @@ export async function POST(request: NextRequest) {
 
 		const data = await request.json();
 
-		if (!data.date || !data.type || !data.memberId || !data.churchId) {
+		if (!data.title || !data.date || !data.churchId) {
 			return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
 		}
 
-		// Criar nova escala de mídia
-		const schedule = await MediaSchedule.create(data);
+		const mediaSchedule = await prisma.mediaSchedule.create({
+			data: {
+				title: data.title,
+				date: new Date(data.date),
+				description: data.description,
+				churchId: data.churchId,
+			}
+		});
 
-		return NextResponse.json(schedule, { status: 201 });
+		return NextResponse.json(mediaSchedule, { status: 201 });
 	} catch (error) {
-		console.error('Erro ao criar escala de mídia:', error);
-
-		if (error.code === 11000) {
-			return NextResponse.json({
-				error: 'Conflito: Já existe um membro escalado para este dia e função'
-			}, { status: 409 });
-		}
-
+		console.error('Erro ao criar cronograma de mídia:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 } 

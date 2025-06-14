@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import MediaSchedule from '@/lib/models/MediaSchedule';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
@@ -12,30 +11,29 @@ interface Params {
 
 export async function GET(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
 			return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 		}
 
-		const schedule = await MediaSchedule.findById(params.id)
-			.populate('memberId', 'name');
+		const mediaSchedule = await prisma.mediaSchedule.findUnique({
+			where: { id: params.id }
+		});
 
-		if (!schedule) {
-			return NextResponse.json({ error: 'Escala não encontrada' }, { status: 404 });
+		if (!mediaSchedule) {
+			return NextResponse.json({ error: 'Cronograma de mídia não encontrado' }, { status: 404 });
 		}
 
-		return NextResponse.json(schedule);
+		return NextResponse.json(mediaSchedule);
 	} catch (error) {
-		console.error('Erro ao buscar escala de mídia:', error);
+		console.error('Erro ao buscar cronograma de mídia:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 }
 
 export async function PUT(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -44,48 +42,53 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 		const data = await request.json();
 
-		const schedule = await MediaSchedule.findByIdAndUpdate(
-			params.id,
-			{ $set: data },
-			{ new: true, runValidators: true }
-		).populate('memberId', 'name');
+		const mediaSchedule = await prisma.mediaSchedule.findUnique({
+			where: { id: params.id }
+		});
 
-		if (!schedule) {
-			return NextResponse.json({ error: 'Escala não encontrada' }, { status: 404 });
+		if (!mediaSchedule) {
+			return NextResponse.json({ error: 'Cronograma de mídia não encontrado' }, { status: 404 });
 		}
 
-		return NextResponse.json(schedule);
+		const updatedMediaSchedule = await prisma.mediaSchedule.update({
+			where: { id: params.id },
+			data: {
+				title: data.title,
+				date: data.date ? new Date(data.date) : undefined,
+				description: data.description,
+			}
+		});
+
+		return NextResponse.json(updatedMediaSchedule);
 	} catch (error) {
-		console.error('Erro ao atualizar escala de mídia:', error);
-
-		if (error.code === 11000) {
-			return NextResponse.json({
-				error: 'Conflito: Já existe um membro escalado para este dia e função'
-			}, { status: 409 });
-		}
-
+		console.error('Erro ao atualizar cronograma de mídia:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 }
 
 export async function DELETE(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
 			return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 		}
 
-		const schedule = await MediaSchedule.findByIdAndDelete(params.id);
+		const mediaSchedule = await prisma.mediaSchedule.findUnique({
+			where: { id: params.id }
+		});
 
-		if (!schedule) {
-			return NextResponse.json({ error: 'Escala não encontrada' }, { status: 404 });
+		if (!mediaSchedule) {
+			return NextResponse.json({ error: 'Cronograma de mídia não encontrado' }, { status: 404 });
 		}
 
-		return NextResponse.json({ message: 'Escala excluída com sucesso' });
+		await prisma.mediaSchedule.delete({
+			where: { id: params.id }
+		});
+
+		return NextResponse.json({ message: 'Cronograma de mídia removido com sucesso' });
 	} catch (error) {
-		console.error('Erro ao excluir escala de mídia:', error);
+		console.error('Erro ao remover cronograma de mídia:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 } 

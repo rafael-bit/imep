@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import Gallery from '@/lib/models/Gallery';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -20,9 +18,19 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ error: 'ID da igreja não fornecido' }, { status: 400 });
 		}
 
-		const galleries = await Gallery.find({
-			churchId: churchId
-		}).sort({ date: -1 });
+		const galleries = await prisma.gallery.findMany({
+			where: {
+				churchId: churchId
+			},
+			include: {
+				images: {
+					orderBy: { order: 'asc' }
+				}
+			},
+			orderBy: {
+				date: 'desc'
+			}
+		});
 
 		return NextResponse.json(galleries);
 	} catch (error) {
@@ -33,7 +41,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -46,12 +53,17 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
 		}
 
-		const gallery = await Gallery.create({
-			title: data.title,
-			description: data.description || '',
-			date: new Date(data.date),
-			churchId: data.churchId,
-			images: data.images || []
+		// Criar nova galeria usando Prisma
+		const gallery = await prisma.gallery.create({
+			data: {
+				title: data.title,
+				description: data.description || '',
+				date: new Date(data.date),
+				churchId: data.churchId,
+			},
+			include: {
+				images: true
+			}
 		});
 
 		return NextResponse.json(gallery, { status: 201 });

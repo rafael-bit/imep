@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import Playlist from '@/lib/models/Playlist';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
@@ -12,15 +11,23 @@ interface Params {
 
 export async function GET(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
 			return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 		}
 
-		const playlist = await Playlist.findById(params.id)
-			.populate('songs.songId', 'title artist key');
+		const playlist = await prisma.playlist.findUnique({
+			where: { id: params.id },
+			include: {
+				songs: {
+					include: {
+						song: true
+					},
+					orderBy: { order: 'asc' }
+				}
+			}
+		});
 
 		if (!playlist) {
 			return NextResponse.json({ error: 'Playlist não encontrada' }, { status: 404 });
@@ -35,7 +42,6 @@ export async function GET(request: NextRequest, { params }: Params) {
 
 export async function PUT(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -44,17 +50,32 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 		const data = await request.json();
 
-		const playlist = await Playlist.findByIdAndUpdate(
-			params.id,
-			{ $set: data },
-			{ new: true, runValidators: true }
-		).populate('songs.songId', 'title artist key');
+		const playlist = await prisma.playlist.findUnique({
+			where: { id: params.id }
+		});
 
 		if (!playlist) {
 			return NextResponse.json({ error: 'Playlist não encontrada' }, { status: 404 });
 		}
 
-		return NextResponse.json(playlist);
+		const updatedPlaylist = await prisma.playlist.update({
+			where: { id: params.id },
+			data: {
+				title: data.title,
+				date: data.date ? new Date(data.date) : undefined,
+				eventType: data.eventType,
+			},
+			include: {
+				songs: {
+					include: {
+						song: true
+					},
+					orderBy: { order: 'asc' }
+				}
+			}
+		});
+
+		return NextResponse.json(updatedPlaylist);
 	} catch (error) {
 		console.error('Erro ao atualizar playlist:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
@@ -63,22 +84,27 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
 			return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
 		}
 
-		const playlist = await Playlist.findByIdAndDelete(params.id);
+		const playlist = await prisma.playlist.findUnique({
+			where: { id: params.id }
+		});
 
 		if (!playlist) {
 			return NextResponse.json({ error: 'Playlist não encontrada' }, { status: 404 });
 		}
 
-		return NextResponse.json({ message: 'Playlist excluída com sucesso' });
+		await prisma.playlist.delete({
+			where: { id: params.id }
+		});
+
+		return NextResponse.json({ message: 'Playlist removida com sucesso' });
 	} catch (error) {
-		console.error('Erro ao excluir playlist:', error);
+		console.error('Erro ao remover playlist:', error);
 		return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
 	}
 } 

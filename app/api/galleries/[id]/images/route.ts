@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import Gallery from '@/lib/models/Gallery';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
@@ -12,7 +11,6 @@ interface Params {
 
 export async function POST(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -25,17 +23,36 @@ export async function POST(request: NextRequest, { params }: Params) {
 			return NextResponse.json({ error: 'Formato de imagens inválido' }, { status: 400 });
 		}
 
-		const gallery = await (Gallery as any).findById(params.id);
+		const gallery = await prisma.gallery.findUnique({
+			where: { id: params.id }
+		});
 
 		if (!gallery) {
 			return NextResponse.json({ error: 'Galeria não encontrada' }, { status: 404 });
 		}
 
-		const updatedGallery = await (Gallery as any).findByIdAndUpdate(
-			params.id,
-			{ $push: { images: { $each: images } } },
-			{ new: true, runValidators: true }
+		// Adicionar imagens à galeria
+		const imagePromises = images.map((image: any, index: number) =>
+			prisma.galleryImage.create({
+				data: {
+					url: image.url,
+					caption: image.caption,
+					order: image.order || index,
+					galleryId: params.id
+				}
+			})
 		);
+
+		await Promise.all(imagePromises);
+
+		const updatedGallery = await prisma.gallery.findUnique({
+			where: { id: params.id },
+			include: {
+				images: {
+					orderBy: { order: 'asc' }
+				}
+			}
+		});
 
 		return NextResponse.json(updatedGallery);
 	} catch (error) {
@@ -46,7 +63,6 @@ export async function POST(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -59,17 +75,30 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 			return NextResponse.json({ error: 'IDs de imagens inválidos' }, { status: 400 });
 		}
 
-		const gallery = await (Gallery as any).findById(params.id);
+		const gallery = await prisma.gallery.findUnique({
+			where: { id: params.id }
+		});
 
 		if (!gallery) {
 			return NextResponse.json({ error: 'Galeria não encontrada' }, { status: 404 });
 		}
 
-		const updatedGallery = await (Gallery as any).findByIdAndUpdate(
-			params.id,
-			{ $pull: { images: { _id: { $in: imageIds } } } },
-			{ new: true }
-		);
+		// Remover imagens da galeria
+		await prisma.galleryImage.deleteMany({
+			where: {
+				id: { in: imageIds },
+				galleryId: params.id
+			}
+		});
+
+		const updatedGallery = await prisma.gallery.findUnique({
+			where: { id: params.id },
+			include: {
+				images: {
+					orderBy: { order: 'asc' }
+				}
+			}
+		});
 
 		return NextResponse.json(updatedGallery);
 	} catch (error) {

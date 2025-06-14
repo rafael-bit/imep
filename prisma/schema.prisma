@@ -67,14 +67,43 @@ enum Role {
   DEVELOPER
 }
 
+enum EquipmentType {
+  AUDIO
+  VIDEO
+  INSTRUMENT
+  LIGHTING
+  COMPUTER
+  OTHER
+}
+
+enum EquipmentStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+}
+
 model Church {
   id        String   @id @default(cuid())
   name      String
   address   String?
-  users     User[]
-  songs     Song[]
+  city      String?
+  state     String?
+  phone     String?
+  email     String?
+  website   String?
+  logo      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  users            User[]
+  songs            Song[]
+  equipments       Equipment[]
+  galleries        Gallery[]
+  playlists        Playlist[]
+  teamMembers      TeamMember[]
+  workerSchedules  WorkerSchedule[]
+  worshipSchedules WorshipSchedule[]
+  mediaSchedules   MediaSchedule[]
 
   @@map("churches")
 }
@@ -127,23 +156,153 @@ model Volunteer {
   ministry  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("volunteers")
 }
 
 model Song {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   artist      String
   key         String
-  bpm         Int      @default(0)
+  bpm         Int       @default(0)
   category    String
-  lyrics      String?  @db.Text
-  chords      String?  @db.Text
+  lyrics      String?   @db.Text
+  chords      String?   @db.Text
   youtubeLink String?
+  lastPlayed  DateTime?
+  church      Church    @relation(fields: [churchId], references: [id])
+  churchId    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  playlistSongs PlaylistSong[]
+
+  @@unique([title, artist, churchId])
+  @@map("songs")
+}
+
+model Equipment {
+  id           String          @id @default(cuid())
+  name         String
+  type         EquipmentType
+  status       EquipmentStatus @default(AVAILABLE)
+  assignedTo   String?
+  notes        String?
+  serialNumber String?
+  purchaseDate DateTime?
+  church       Church          @relation(fields: [churchId], references: [id])
+  churchId     String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@map("equipments")
+}
+
+model Gallery {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
   church      Church   @relation(fields: [churchId], references: [id])
   churchId    String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([title, artist, churchId])
-  @@map("songs")
+  images GalleryImage[]
+
+  @@map("galleries")
+}
+
+model GalleryImage {
+  id        String  @id @default(cuid())
+  url       String
+  caption   String?
+  order     Int     @default(0)
+  gallery   Gallery @relation(fields: [galleryId], references: [id], onDelete: Cascade)
+  galleryId String
+
+  @@map("gallery_images")
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  title     String
+  date      DateTime
+  eventType String
+  church    Church   @relation(fields: [churchId], references: [id])
+  churchId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  songs PlaylistSong[]
+
+  @@map("playlists")
+}
+
+model PlaylistSong {
+  id         String   @id @default(cuid())
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  playlistId String
+  song       Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+  songId     String
+  order      Int
+  key        String? // Override song key
+  notes      String?
+
+  @@unique([playlistId, songId])
+  @@map("playlist_songs")
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  email     String?
+  phone     String?
+  church    Church   @relation(fields: [churchId], references: [id])
+  churchId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("team_members")
+}
+
+model WorkerSchedule {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  description String?
+  church      Church   @relation(fields: [churchId], references: [id])
+  churchId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("worker_schedules")
+}
+
+model WorshipSchedule {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  description String?
+  church      Church   @relation(fields: [churchId], references: [id])
+  churchId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("worship_schedules")
+}
+
+model MediaSchedule {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  description String?
+  church      Church   @relation(fields: [churchId], references: [id])
+  churchId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("media_schedules")
 }

@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import Playlist from '@/lib/models/Playlist';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -15,33 +13,27 @@ export async function GET(request: NextRequest) {
 
 		const { searchParams } = new URL(request.url);
 		const churchId = searchParams.get('churchId');
-		const eventType = searchParams.get('eventType');
-		const startDate = searchParams.get('startDate');
-		const endDate = searchParams.get('endDate');
 
 		if (!churchId) {
 			return NextResponse.json({ error: 'ID da igreja não fornecido' }, { status: 400 });
 		}
 
-		// Construir query
-		const query: any = { churchId };
-
-		if (eventType) {
-			query.eventType = eventType;
-		}
-
-		if (startDate || endDate) {
-			query.date = {};
-			if (startDate) {
-				query.date.$gte = new Date(startDate);
+		const playlists = await prisma.playlist.findMany({
+			where: {
+				churchId: churchId
+			},
+			include: {
+				songs: {
+					include: {
+						song: true
+					},
+					orderBy: { order: 'asc' }
+				}
+			},
+			orderBy: {
+				date: 'desc'
 			}
-			if (endDate) {
-				query.date.$lte = new Date(endDate);
-			}
-		}
-
-		const playlists = await Playlist.find(query)
-			.sort({ date: -1 });
+		});
 
 		return NextResponse.json(playlists);
 	} catch (error) {
@@ -52,7 +44,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -65,13 +56,21 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
 		}
 
-		// Garantir que songs seja um array
-		if (!data.songs) {
-			data.songs = [];
-		}
-
-		// Criar nova playlist
-		const playlist = await Playlist.create(data);
+		const playlist = await prisma.playlist.create({
+			data: {
+				title: data.title,
+				date: new Date(data.date),
+				eventType: data.eventType,
+				churchId: data.churchId,
+			},
+			include: {
+				songs: {
+					include: {
+						song: true
+					}
+				}
+			}
+		});
 
 		return NextResponse.json(playlist, { status: 201 });
 	} catch (error) {

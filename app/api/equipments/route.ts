@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-import Equipment from '@/lib/models/Equipment';
+import prisma from '@/lib/dbConnect';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -22,18 +20,21 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ error: 'ID da igreja não fornecido' }, { status: 400 });
 		}
 
-		const query: any = { churchId };
+		// Construir query
+		const where: any = { churchId };
 
 		if (type) {
-			query.type = type;
+			where.type = type.toUpperCase();
 		}
 
 		if (status) {
-			query.status = status;
+			where.status = status.toUpperCase();
 		}
 
-		const equipments = await Equipment.find(query)
-			.sort({ name: 1 });
+		const equipments = await prisma.equipment.findMany({
+			where,
+			orderBy: { name: 'asc' }
+		});
 
 		return NextResponse.json(equipments);
 	} catch (error) {
@@ -44,7 +45,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		await dbConnect();
 		const session = await getServerSession(authOptions);
 
 		if (!session) {
@@ -57,7 +57,19 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
 		}
 
-		const equipment = await Equipment.create(data);
+		// Criar novo equipamento
+		const equipment = await prisma.equipment.create({
+			data: {
+				name: data.name,
+				type: data.type.toUpperCase(),
+				status: data.status?.toUpperCase() || 'AVAILABLE',
+				assignedTo: data.assignedTo,
+				notes: data.notes,
+				serialNumber: data.serialNumber,
+				purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
+				churchId: data.churchId,
+			}
+		});
 
 		return NextResponse.json(equipment, { status: 201 });
 	} catch (error) {
