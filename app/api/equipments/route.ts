@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
 			return NextResponse.json({ error: 'ID da igreja não fornecido' }, { status: 400 });
 		}
 
-		// Construir query
 		const query: any = { churchId };
 
 		if (type) {
@@ -58,7 +57,6 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 });
 		}
 
-		// Criar novo equipamento
 		const equipment = await Equipment.create(data);
 
 		return NextResponse.json(equipment, { status: 201 });

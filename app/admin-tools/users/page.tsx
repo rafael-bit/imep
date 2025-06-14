@@ -107,7 +107,7 @@ export default function UserManagementPage() {
 			id: user.id,
 			name: user.name || '',
 			email: user.email || '',
-			password: '', // Password is not pre-filled when editing
+			password: '',
 			role: user.role,
 			churchId: user.churchId || '',
 			isLeader: user.isLeader || false,
@@ -126,7 +126,6 @@ export default function UserManagementPage() {
 			const endpoint = isEditing ? `/api/admin/users/${formData.id}` : '/api/admin/users';
 			const method = isEditing ? 'PUT' : 'POST';
 
-			// If editing and password is empty, omit it
 			const submitData = isEditing && !formData.password
 				? { ...formData, password: undefined }
 				: formData;
@@ -148,7 +147,7 @@ export default function UserManagementPage() {
 			setSuccess(isEditing ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!');
 			resetForm();
 			setDialogOpen(false);
-			fetchUsers(); // Refresh the user list
+			fetchUsers();
 		} catch (error) {
 			setError(error instanceof Error ? error.message : 'Erro desconhecido');
 		} finally {

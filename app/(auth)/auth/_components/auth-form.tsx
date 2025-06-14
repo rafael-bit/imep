@@ -20,7 +20,6 @@ export default function AuthForm() {
 	const [isLogin, setIsLogin] = useState(true)
 	const [error, setError] = useState('')
 
-	// Login form
 	const loginForm = useForm<LoginInput>({
 		resolver: zodResolver(loginSchema),
 		defaultValues: {
@@ -29,7 +28,6 @@ export default function AuthForm() {
 		}
 	})
 
-	// Register form
 	const registerForm = useForm<RegisterInput>({
 		resolver: zodResolver(registerSchema),
 		defaultValues: {

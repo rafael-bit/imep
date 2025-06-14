@@ -50,7 +50,6 @@ export async function PUT(
 			);
 		}
 
-		// Check if agenda exists
 		const existingAgenda = await prisma.agenda.findUnique({
 			where: {
 				id: params.id
@@ -64,7 +63,6 @@ export async function PUT(
 			);
 		}
 
-		// Update agenda
 		const updatedAgenda = await prisma.agenda.update({
 			where: {
 				id: params.id
@@ -95,7 +93,6 @@ export async function DELETE(
 	{ params }: { params: { id: string } }
 ) {
 	try {
-		// Check if agenda exists
 		const existingAgenda = await prisma.agenda.findUnique({
 			where: {
 				id: params.id
@@ -109,7 +106,6 @@ export async function DELETE(
 			);
 		}
 
-		// Delete agenda
 		await prisma.agenda.delete({
 			where: {
 				id: params.id

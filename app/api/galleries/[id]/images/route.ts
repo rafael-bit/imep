@@ -25,14 +25,13 @@ export async function POST(request: NextRequest, { params }: Params) {
 			return NextResponse.json({ error: 'Formato de imagens inválido' }, { status: 400 });
 		}
 
-		const gallery = await Gallery.findById(params.id);
+		const gallery = await (Gallery as any).findById(params.id);
 
 		if (!gallery) {
 			return NextResponse.json({ error: 'Galeria não encontrada' }, { status: 404 });
 		}
 
-		// Adicionar novas imagens à galeria
-		const updatedGallery = await Gallery.findByIdAndUpdate(
+		const updatedGallery = await (Gallery as any).findByIdAndUpdate(
 			params.id,
 			{ $push: { images: { $each: images } } },
 			{ new: true, runValidators: true }
@@ -60,14 +59,13 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 			return NextResponse.json({ error: 'IDs de imagens inválidos' }, { status: 400 });
 		}
 
-		const gallery = await Gallery.findById(params.id);
+		const gallery = await (Gallery as any).findById(params.id);
 
 		if (!gallery) {
 			return NextResponse.json({ error: 'Galeria não encontrada' }, { status: 404 });
 		}
 
-		// Remover imagens da galeria
-		const updatedGallery = await Gallery.findByIdAndUpdate(
+		const updatedGallery = await (Gallery as any).findByIdAndUpdate(
 			params.id,
 			{ $pull: { images: { _id: { $in: imageIds } } } },
 			{ new: true }

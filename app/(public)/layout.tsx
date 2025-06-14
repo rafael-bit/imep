@@ -1,4 +1,3 @@
-// Layout para páginas públicas
 export default function PublicLayout({
 	children,
 }: {

@@ -5,7 +5,6 @@ export async function POST(request: NextRequest) {
 	try {
 		const { email, secret } = await request.json();
 
-		// Verificar se o secret fornecido corresponde ao ambiente
 		if (secret !== process.env.ADMIN_SECRET && secret !== 'dev-secret-for-testing') {
 			return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 		}
@@ -17,7 +16,6 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Buscar o usuário pelo email
 		const user = await prisma.user.findUnique({
 			where: { email },
 		});
@@ -29,7 +27,6 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Atualizar o usuário como administrador
 		const updatedUser = await prisma.user.update({
 			where: { id: user.id },
 			data: { isAdmin: true },

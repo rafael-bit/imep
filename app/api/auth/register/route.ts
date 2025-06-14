@@ -8,7 +8,6 @@ export async function POST(request: NextRequest) {
 	try {
 		const { name, email, password } = await request.json();
 
-		// Validação básica
 		if (!name || !email || !password) {
 			return NextResponse.json(
 				{ error: 'Nome, email e senha são obrigatórios' },
@@ -16,7 +15,6 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Verificar se o email já existe
 		const existingUser = await prisma.user.findUnique({
 			where: { email },
 		});
@@ -28,20 +26,17 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Hash da senha
 		const hashedPassword = await hash(password, 10);
 
-		// Criar usuário
 		const user = await prisma.user.create({
 			data: {
 				name,
 				email,
 				password: hashedPassword,
-				role: 'USER', // Papel padrão
+				role: 'USER',
 			},
 		});
 
-		// Remover senha da resposta
 		const { password: _, ...userWithoutPassword } = user;
 
 		return NextResponse.json(

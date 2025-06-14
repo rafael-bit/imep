@@ -1,9 +1,9 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IEquipment {
 	name: string;
 	type: string;
-	status: 'available' | 'in_use' | 'maintenance';
+	status: string;
 	assignedTo?: string;
 	notes?: string;
 	serialNumber?: string;
@@ -13,7 +13,11 @@ export interface IEquipment {
 	updatedAt: Date;
 }
 
-const EquipmentSchema = new Schema<IEquipment>(
+export interface IEquipmentDocument extends IEquipment, Document { }
+
+export interface IEquipmentModel extends Model<IEquipmentDocument> { }
+
+const EquipmentSchema = new Schema<IEquipmentDocument>(
 	{
 		name: { type: String, required: true },
 		type: {
@@ -36,5 +40,7 @@ const EquipmentSchema = new Schema<IEquipment>(
 	{ timestamps: true }
 );
 
-export default mongoose.models.Equipment ||
-	mongoose.model<IEquipment>('Equipment', EquipmentSchema); 
+const Equipment: IEquipmentModel = mongoose.models.Equipment ||
+	mongoose.model<IEquipmentDocument, IEquipmentModel>('Equipment', EquipmentSchema);
+
+export default Equipment; 

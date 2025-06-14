@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface ISong {
 	title: string;
@@ -15,7 +15,11 @@ export interface ISong {
 	updatedAt: Date;
 }
 
-const SongSchema = new Schema<ISong>(
+export interface ISongDocument extends ISong, Document { }
+
+export interface ISongModel extends Model<ISongDocument> { }
+
+const SongSchema = new Schema<ISongDocument>(
 	{
 		title: { type: String, required: true },
 		artist: { type: String, required: true },
@@ -36,4 +40,7 @@ SongSchema.index({ title: 'text', artist: 'text' });
 // Index para garantir que não haja músicas duplicadas por igreja
 SongSchema.index({ title: 1, artist: 1, churchId: 1 }, { unique: true });
 
-export default mongoose.models.Song || mongoose.model<ISong>('Song', SongSchema); 
+const Song: ISongModel = mongoose.models.Song ||
+	mongoose.model<ISongDocument, ISongModel>('Song', SongSchema);
+
+export default Song; 

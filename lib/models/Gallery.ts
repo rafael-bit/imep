@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IGallery {
 	title: string;
@@ -14,7 +14,11 @@ export interface IGallery {
 	churchId: mongoose.Types.ObjectId;
 }
 
-const GallerySchema = new Schema<IGallery>(
+export interface IGalleryDocument extends IGallery, Document { }
+
+export interface IGalleryModel extends Model<IGalleryDocument> { }
+
+const GallerySchema = new Schema<IGalleryDocument>(
 	{
 		title: { type: String, required: true },
 		date: { type: Date, required: true },
@@ -31,4 +35,7 @@ const GallerySchema = new Schema<IGallery>(
 	{ timestamps: true }
 );
 
-export default mongoose.models.Gallery || mongoose.model<IGallery>('Gallery', GallerySchema); 
+const Gallery: IGalleryModel = mongoose.models.Gallery ||
+	mongoose.model<IGalleryDocument, IGalleryModel>('Gallery', GallerySchema);
+
+export default Gallery; 

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPlaylist {
 	title: string;
@@ -15,7 +15,11 @@ export interface IPlaylist {
 	updatedAt: Date;
 }
 
-const PlaylistSchema = new Schema<IPlaylist>(
+export interface IPlaylistDocument extends IPlaylist, Document { }
+
+export interface IPlaylistModel extends Model<IPlaylistDocument> { }
+
+const PlaylistSchema = new Schema<IPlaylistDocument>(
 	{
 		title: { type: String, required: true },
 		date: { type: Date, required: true },
@@ -37,5 +41,7 @@ const PlaylistSchema = new Schema<IPlaylist>(
 	{ timestamps: true }
 );
 
-export default mongoose.models.Playlist ||
-	mongoose.model<IPlaylist>('Playlist', PlaylistSchema); 
+const Playlist: IPlaylistModel = mongoose.models.Playlist ||
+	mongoose.model<IPlaylistDocument, IPlaylistModel>('Playlist', PlaylistSchema);
+
+export default Playlist; 

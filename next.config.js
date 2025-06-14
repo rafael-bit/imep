@@ -2,9 +2,6 @@
 const nextConfig = {
 	reactStrictMode: true,
 
-	// Output configuration for production builds
-	output: 'standalone',
-
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
@@ -13,7 +10,6 @@ const nextConfig = {
 		ignoreBuildErrors: true,
 	},
 
-	// Configuração de headers para CORS
 	async headers() {
 		return [
 			{

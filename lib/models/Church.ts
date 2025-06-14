@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IChurch {
 	name: string;
@@ -13,7 +13,11 @@ export interface IChurch {
 	updatedAt: Date;
 }
 
-const ChurchSchema = new Schema<IChurch>(
+export interface IChurchDocument extends IChurch, Document { }
+
+export interface IChurchModel extends Model<IChurchDocument> { }
+
+const ChurchSchema = new Schema<IChurchDocument>(
 	{
 		name: { type: String, required: true },
 		address: { type: String },
@@ -27,4 +31,7 @@ const ChurchSchema = new Schema<IChurch>(
 	{ timestamps: true }
 );
 
-export default mongoose.models.Church || mongoose.model<IChurch>('Church', ChurchSchema); 
+const Church: IChurchModel = mongoose.models.Church ||
+	mongoose.model<IChurchDocument, IChurchModel>('Church', ChurchSchema);
+
+export default Church; 

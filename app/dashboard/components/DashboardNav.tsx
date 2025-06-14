@@ -279,8 +279,8 @@ export default function DashboardNav({ user }: { user: SafeUser }) {
 			<Link
 				href={item.href}
 				className={`flex items-center px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${pathname === item.href
-						? 'bg-primary text-primary-foreground hover:bg-primary/90'
-						: 'text-gray-700 dark:text-gray-300'
+					? 'bg-primary text-primary-foreground hover:bg-primary/90'
+					: 'text-gray-700 dark:text-gray-300'
 					}`}
 			>
 				{item.icon}

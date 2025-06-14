@@ -109,7 +109,7 @@ export default function ChurchManagementPage() {
 			setSuccess(isEditing ? 'Igreja atualizada com sucesso!' : 'Igreja criada com sucesso!');
 			resetForm();
 			setDialogOpen(false);
-			fetchChurches(); // Refresh the church list
+					fetchChurches(); // Refresh the church list
 		} catch (error) {
 			setError(error instanceof Error ? error.message : 'Erro desconhecido');
 		} finally {

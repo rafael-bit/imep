@@ -43,14 +43,12 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 		const data = await request.json();
 
-		// Atualizar status de disponibilidade
 		if (data.status === 'in_use' && !data.assignedTo) {
 			return NextResponse.json({
 				error: 'É necessário informar quem está usando o equipamento'
 			}, { status: 400 });
 		}
 
-		// Se o status for alterado de "in_use" para outro, remover o assignedTo
 		if (data.status && data.status !== 'in_use') {
 			data.assignedTo = undefined;
 		}
