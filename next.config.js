@@ -2,8 +2,6 @@
 const nextConfig = {
 	reactStrictMode: false,
 
-	output: process.env.VERCEL ? 'standalone' : undefined,
-
 	experimental: {
 		optimizePackageImports: ['@radix-ui/react-switch'],
 	},
@@ -23,7 +21,6 @@ const nextConfig = {
 
 		if (!isServer) {
 			config.resolve.fallback = {
-				...config.resolve.fallback,
 				fs: false,
 				net: false,
 				tls: false,
