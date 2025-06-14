@@ -16,17 +16,10 @@ const nextConfig = {
 		ignoreBuildErrors: true,
 	},
 
-	onDemandEntries: {
-		maxInactiveAge: 25 * 1000,
-		pagesBufferLength: 2,
-	},
-
 	poweredByHeader: false,
 
-	webpack: (config, { isServer, dev }) => {
-		config.ignoreWarnings = [
-			/.*/,
-		];
+	webpack: (config, { isServer }) => {
+		config.ignoreWarnings = [/.*/];
 
 		if (!isServer) {
 			config.resolve.fallback = {
@@ -47,10 +40,6 @@ const nextConfig = {
 		}
 
 		return config;
-	},
-
-	generateBuildId: async () => {
-		return 'build-' + Date.now().toString(36);
 	},
 
 	async headers() {
