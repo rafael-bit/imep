@@ -15,8 +15,14 @@ const Footer = () => {
 						<h1 className="text-3xl font-bold">Regenere</h1>
 					</li>
 					<li className="mt-5 hidden sm:inline-block text-sm"><p>A Regenere é uma comunidade cristã comprometida em viver e anunciar o amor de Jesus. Cremos na Palavra de Deus como verdade e buscamos diariamente uma vida guiada pelo Espírito Santo.</p></li>
-					<li className="mt-5 sm:mt-10 text-center sm:text-left">
+					<li className="mt-5 sm:mt-10 text-center sm:text-left space-y-2">
 						<p>&copy; {new Date().getFullYear()} Igreja Batista Regenere.</p>
+						<Link
+							href="/politica-de-privacidade"
+							className="text-sm text-gray-400 hover:text-white transition-colors duration-300"
+						>
+							Política de Privacidade (App)
+						</Link>
 					</li>
 				</ul>
 				<ul className="w-full flex flex-col items-center justify-center sm:inline-block pt-7 sm:w-1/4">
